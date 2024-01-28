@@ -2,11 +2,10 @@ use std::fs;
 
 mod codes;
 mod instruction;
+mod storage;
 
-use instruction::Instruction;
-use regex::Regex;
-
-use crate::instruction::Number;
+use instruction::{Instruction, IntReg};
+use storage::Registers;
 
 fn load_bin() -> Vec<u16> {
     let bytes = fs::read("resources/challenge.bin").unwrap();
@@ -23,13 +22,16 @@ fn code0() -> String {
     "LDOb7UGhTi".to_string()
 }
 
+#[cfg(test)]
 fn code1(instructions: &[Instruction]) -> String {
+    use crate::instruction::IntReg;
+
     let welcome_msg: String = instructions
         .iter()
         .take_while(|ins| !matches!(ins, Instruction::Halt))
         .flat_map(|ins| {
             if let Instruction::Out(a) = ins {
-                if let Number::Value(v) = a {
+                if let IntReg::Value(v) = a {
                     Some(*v as u8 as char)
                 } else {
                     None
@@ -40,15 +42,91 @@ fn code1(instructions: &[Instruction]) -> String {
         })
         .collect();
     println!("{}", welcome_msg);
-    let welcome_re = Regex::new(r"into the challenge website: (\w+)").unwrap();
+    let welcome_re = regex::Regex::new(r"into the challenge website: (\w+)").unwrap();
     welcome_re.captures(&welcome_msg).unwrap()[1].to_string()
+}
+
+fn execute(ins: &Instruction, ir: &mut u16, regs: &mut Registers) {
+    match *ins {
+        Instruction::Halt => std::process::exit(0),
+        Instruction::Out(a) => {
+            print!("{}", regs.get_ir(a) as u8 as char);
+            *ir += 1;
+        }
+        Instruction::Noop => *ir += 1,
+        Instruction::Jmp(a) => {
+            *ir = regs.get_ir(a);
+        }
+        Instruction::Jt(a, b) => {
+            if regs.get_ir(a) != 0 {
+                *ir = regs.get_ir(b);
+            } else {
+                *ir += 1;
+            }
+        }
+        Instruction::Jf(a, b) => {
+            if regs.get_ir(a) == 0 {
+                *ir = regs.get_ir(b);
+            } else {
+                *ir += 1;
+            }
+        }
+        Instruction::Set(a, b) => {
+            regs.set_ir(a, regs.get_ir(b));
+            *ir += 1;
+        }
+        Instruction::Eq(a, b, c) => {
+            regs.set_ir(
+                a,
+                if regs.get_ir(b) == regs.get_ir(c) {
+                    1
+                } else {
+                    0
+                },
+            );
+            *ir += 1;
+        }
+        Instruction::Add(a, b, c) => {
+            regs.binary_op(a, b, c, |x, y| ((x as u32 + y as u32) % 32768) as u16);
+            *ir += 1;
+        }
+        Instruction::Mult(a, b, c) => {
+            regs.binary_op(a, b, c, |x, y| ((x as u32 * y as u32) % 32768) as u16);
+            *ir += 1;
+        }
+        Instruction::Mod(a, b, c) => {
+            regs.binary_op(a, b, c, |x, y| ((x as u32 / y as u32) % 32768) as u16);
+            *ir += 1;
+        }
+        Instruction::And(a, b, c) => {
+            regs.binary_op(a, b, c, |x, y| x & y);
+            *ir += 1;
+        }
+        Instruction::Or(a, b, c) => {
+            regs.binary_op(a, b, c, |x, y| x | y);
+            *ir += 1;
+        }
+        _ => {
+            println!("{}: {:?} - NOT IMPLEMENTED", ir, ins);
+            *ir += 1;
+        }
+    }
 }
 
 fn main() {
     let bin = load_bin();
     let instructions = instruction::build(&bin);
-    let code = code1(&instructions);
-    codes::check_code(1, &code);
+
+    let mut registers = Registers::new();
+    registers.set(0, 32766);
+    // registers.set(1, 1);
+
+    let mut ir: u16 = 0;
+    while ir < instructions.len() as u16 {
+        let ins = instructions[ir as usize];
+        println!("{}: {:?}; Regs={:?}", ir, ins, registers);
+        execute(&ins, &mut ir, &mut registers);
+    }
 }
 
 #[cfg(test)]
