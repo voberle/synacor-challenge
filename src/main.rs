@@ -6,6 +6,8 @@ mod instruction;
 use instruction::Instruction;
 use regex::Regex;
 
+use crate::instruction::Number;
+
 fn load_bin() -> Vec<u16> {
     let bytes = fs::read("resources/challenge.bin").unwrap();
     // Converting to u16 with safe code
@@ -27,7 +29,11 @@ fn code1(instructions: &[Instruction]) -> String {
         .take_while(|ins| !matches!(ins, Instruction::Halt))
         .flat_map(|ins| {
             if let Instruction::Out(a) = ins {
-                Some(*a as u8 as char)
+                if let Number::Value(v) = a {
+                    Some(*v as u8 as char)
+                } else {
+                    None
+                }
             } else {
                 None
             }

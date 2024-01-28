@@ -1,50 +1,73 @@
+// The numbers in the binary format can mean two things: A literal value or a register number.
+#[derive(Debug, Clone, Copy)]
+pub enum Number {
+    Value(u16),
+    Register(usize),
+}
+
+impl Number {
+    fn new(n: u16) -> Self {
+        match n {
+            0..=32767 => Number::Value(n),
+            32768..=32775 => Number::Register((n - 32768) as usize),
+            _ => panic!("Invalid number"),
+        }
+    }
+}
+
 // Instructions are in the order of the spec, meaning their variant is the opcode.
 #[derive(Debug, Clone, Copy)]
 pub enum Instruction {
     // stop execution and terminate the program
     Halt,
     // set register <a> to the value of <b>
-    Set(u16, u16),
+    Set(Number, Number),
     // push <a> onto the stack
-    Push(u16),
+    Push(Number),
     // remove the top element from the stack and write it into <a>; empty stack = error
-    Pop(u16),
+    Pop(Number),
     // set <a> to 1 if <b> is equal to <c>; set it to 0 otherwise
-    Eq(u16, u16, u16),
+    Eq(Number, Number, Number),
     // set <a> to 1 if <b> is greater than <c>; set it to 0 otherwise
-    Gt(u16, u16, u16),
+    Gt(Number, Number, Number),
     // jump to <a>
-    Jmp(u16),
+    Jmp(Number),
     // if <a> is nonzero, jump to <b>
-    Jt(u16, u16),
+    Jt(Number, Number),
     // if <a> is zero, jump to <b>
-    Jf(u16, u16),
+    Jf(Number, Number),
     // assign into <a> the sum of <b> and <c> (modulo 32768)
-    Add(u16, u16, u16),
+    Add(Number, Number, Number),
     // store into <a> the product of <b> and <c> (modulo 32768)
-    Mult(u16, u16, u16),
+    Mult(Number, Number, Number),
     // store into <a> the remainder of <b> divided by <c>
-    Mod(u16, u16, u16),
+    Mod(Number, Number, Number),
     // stores into <a> the bitwise and of <b> and <c>
-    And(u16, u16, u16),
+    And(Number, Number, Number),
     // stores into <a> the bitwise or of <b> and <c>
-    Or(u16, u16, u16),
+    Or(Number, Number, Number),
     // stores 15-bit bitwise inverse of <b> in <a>
-    Not(u16, u16),
+    Not(Number, Number),
     // read memory at address <b> and write it to <a>
-    RMem(u16, u16),
+    RMem(Number, Number),
     // write the value from <b> into memory at address <a>
-    WMem(u16, u16),
+    WMem(Number, Number),
     // write the address of the next instruction to the stack and jump to <a>
-    Call(u16),
+    Call(Number),
     // remove the top element from the stack and jump to it; empty stack = halt
     Ret,
     // write the character represented by ascii code <a> to the terminal
-    Out(u16),
+    Out(Number),
     // read a character from the terminal and write its ascii code to <a>; it can be assumed that once input starts, it will continue until a newline is encountered; this means that you can safely read whole lines from the keyboard instead of having to figure out how to read individual characters
-    In(u16),
+    In(Number),
     // no operation
     Noop,
+}
+
+macro_rules! next {
+    ($iter:expr) => {
+        Number::new(*$iter.next().unwrap())
+    };
 }
 
 pub fn build(bin: &[u16]) -> Vec<Instruction> {
@@ -54,54 +77,26 @@ pub fn build(bin: &[u16]) -> Vec<Instruction> {
     while let Some(opcode) = iter.next() {
         instructions.push(match *opcode {
             0 => Halt,
-            1 => Set(*iter.next().unwrap(), *iter.next().unwrap()),
-            2 => Push(*iter.next().unwrap()),
-            3 => Pop(*iter.next().unwrap()),
-            4 => Eq(
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-            ),
-            5 => Gt(
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-            ),
-            6 => Jmp(*iter.next().unwrap()),
-            7 => Jt(*iter.next().unwrap(), *iter.next().unwrap()),
-            8 => Jf(*iter.next().unwrap(), *iter.next().unwrap()),
-            9 => Add(
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-            ),
-            10 => Mult(
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-            ),
-            11 => Mod(
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-            ),
-            12 => And(
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-            ),
-            13 => Or(
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-                *iter.next().unwrap(),
-            ),
-            14 => Not(*iter.next().unwrap(), *iter.next().unwrap()),
-            15 => RMem(*iter.next().unwrap(), *iter.next().unwrap()),
-            16 => WMem(*iter.next().unwrap(), *iter.next().unwrap()),
-            17 => Call(*iter.next().unwrap()),
+            1 => Set(next!(iter), next!(iter)),
+            2 => Push(next!(iter)),
+            3 => Pop(next!(iter)),
+            4 => Eq(next!(iter), next!(iter), next!(iter)),
+            5 => Gt(next!(iter), next!(iter), next!(iter)),
+            6 => Jmp(next!(iter)),
+            7 => Jt(next!(iter), next!(iter)),
+            8 => Jf(next!(iter), next!(iter)),
+            9 => Add(next!(iter), next!(iter), next!(iter)),
+            10 => Mult(next!(iter), next!(iter), next!(iter)),
+            11 => Mod(next!(iter), next!(iter), next!(iter)),
+            12 => And(next!(iter), next!(iter), next!(iter)),
+            13 => Or(next!(iter), next!(iter), next!(iter)),
+            14 => Not(next!(iter), next!(iter)),
+            15 => RMem(next!(iter), next!(iter)),
+            16 => WMem(next!(iter), next!(iter)),
+            17 => Call(next!(iter)),
             18 => Ret,
-            19 => Out(*iter.next().unwrap()),
-            20 => In(*iter.next().unwrap()),
+            19 => Out(next!(iter)),
+            20 => In(next!(iter)),
             21 => Noop,
             _ => {
                 // There are some invalid instructions, ignoring them for now.
