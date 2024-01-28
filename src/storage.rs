@@ -43,7 +43,36 @@ impl Registers {
         }
     }
 
-    pub fn binary_op(&mut self, a: IntReg, b: IntReg, c: IntReg, op_fn: fn(u16, u16) -> u16) {
-        self.set_ir(a, op_fn(self.get_ir(b), self.get_ir(c)));
+    pub fn cmp_op(&mut self, a: IntReg, b: IntReg, c: IntReg, cmp_fn: fn(u16, u16) -> bool) {
+        self.set_ir(
+            a,
+            if cmp_fn(self.get_ir(b), self.get_ir(c)) {
+                1
+            } else {
+                0
+            },
+        );
+    }
+
+    pub fn binary_op(&mut self, a: IntReg, b: IntReg, c: IntReg, binary_fn: fn(u16, u16) -> u16) {
+        self.set_ir(a, binary_fn(self.get_ir(b), self.get_ir(c)));
+    }
+
+    pub fn unary_op(&mut self, a: IntReg, b: IntReg, unary_fn: fn(u16) -> u16) {
+        self.set_ir(a, unary_fn(self.get_ir(b)));
+    }
+}
+
+pub struct Storage {
+    pub regs: Registers,
+    pub stack: Vec<u16>,
+}
+
+impl Storage {
+    pub fn new() -> Self {
+        Self {
+            regs: Registers::new(),
+            stack: Vec::new(),
+        }
     }
 }
