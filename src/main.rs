@@ -15,12 +15,13 @@ fn load_bin() -> Vec<u16> {
         .collect()
 }
 
-fn code0() {
+#[cfg(test)]
+fn code0() -> String {
     // First code was in the spec.
-    codes::check_code(0, "LDOb7UGhTi");
+    "LDOb7UGhTi".to_string()
 }
 
-fn code1(instructions: &[Instruction]) {
+fn code1(instructions: &[Instruction]) -> String {
     let welcome_msg: String = instructions
         .iter()
         .take_while(|ins| !matches!(ins, Instruction::Halt))
@@ -34,13 +35,29 @@ fn code1(instructions: &[Instruction]) {
         .collect();
     println!("{}", welcome_msg);
     let welcome_re = Regex::new(r"into the challenge website: (\w+)").unwrap();
-    codes::check_code(1, &welcome_re.captures(&welcome_msg).unwrap()[1]);
+    welcome_re.captures(&welcome_msg).unwrap()[1].to_string()
 }
 
 fn main() {
-    code0();
-
     let bin = load_bin();
     let instructions = instruction::build(&bin);
-    code1(&instructions);
+    let code = code1(&instructions);
+    codes::check_code(1, &code);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_code0() {
+        assert!(codes::verify_code(0, &code0()));
+    }
+
+    #[test]
+    fn test_code1() {
+        let bin = load_bin();
+        let instructions = instruction::build(&bin);
+        assert!(codes::verify_code(1, &code1(&instructions)));
+    }
 }

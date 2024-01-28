@@ -11,7 +11,7 @@ const CODES: [&str; 8] = [
     "d0c54d4ed7f943280ce3e19532dbb1a6",
 ];
 
-fn verify_code(code_nb: usize, code: &str) -> bool {
+pub fn verify_code(code_nb: usize, code: &str) -> bool {
     format!("{:x}", md5::compute(code.as_bytes())) == CODES[code_nb]
 }
 
