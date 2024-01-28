@@ -17,11 +17,11 @@ impl Registers {
         Self { regs: [0; 8] }
     }
 
-    pub fn get(&self, i: u16) -> u16 {
+    fn get(&self, i: u16) -> u16 {
         self.regs[i as usize]
     }
 
-    pub fn set(&mut self, i: u16, val: u16) {
+    fn set(&mut self, i: u16, val: u16) {
         self.regs[i as usize] = val;
     }
 
@@ -63,9 +63,28 @@ impl Registers {
     }
 }
 
+pub struct Memory {
+    mem: Vec<u16>
+}
+
+impl Memory {
+    pub fn new() -> Self {
+        Self { mem: vec![0; 2_usize.pow(15)] }
+    }
+
+    pub fn read(&self, a: u16) -> u16 {
+        self.mem[a as usize]
+    }
+
+    pub fn write(&mut self, a: u16, val: u16) {
+        self.mem[a as usize] = val;
+    }
+}
+
 pub struct Storage {
     pub regs: Registers,
     pub stack: Vec<u16>,
+    pub mem: Memory,
 }
 
 impl Storage {
@@ -73,6 +92,7 @@ impl Storage {
         Self {
             regs: Registers::new(),
             stack: Vec::new(),
+            mem: Memory::new(),
         }
     }
 }

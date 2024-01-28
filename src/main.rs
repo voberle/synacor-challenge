@@ -5,7 +5,7 @@ mod instruction;
 mod storage;
 
 use instruction::{Instruction, IntReg};
-use storage::{Registers, Storage};
+use storage::Storage;
 
 fn load_bin() -> Vec<u16> {
     let bytes = fs::read("resources/challenge.bin").unwrap();
@@ -46,88 +46,88 @@ fn code1(instructions: &[Instruction]) -> String {
     welcome_re.captures(&welcome_msg).unwrap()[1].to_string()
 }
 
-fn execute(ins: &Instruction, ir: &mut u16, regs: &mut Registers, stack: &mut Vec<u16>) {
+fn execute(ins: &Instruction, ir: &mut u16, st: &mut Storage) {
     match *ins {
         Instruction::Halt => std::process::exit(0),
         Instruction::Set(a, b) => {
-            regs.set_ir(a, regs.get_ir(b));
+            st.regs.set_ir(a, st.regs.get_ir(b));
             *ir += 1;
         }
         Instruction::Push(a) => {
-            stack.push(regs.get_ir(a));
+            st.stack.push(st.regs.get_ir(a));
             *ir += 1;
         }
         Instruction::Pop(a) => {
-            regs.set(regs.get_ir(a), stack.pop().expect("Stack is empty"));
+            st.regs.set_ir(a, st.stack.pop().expect("Stack is empty"));
             *ir += 1;
         }
         Instruction::Eq(a, b, c) => {
-            regs.cmp_op(a, b, c, |x, y| x == y);
+            st.regs.cmp_op(a, b, c, |x, y| x == y);
             *ir += 1;
         }
         Instruction::Gt(a, b, c) => {
-            regs.cmp_op(a, b, c, |x, y| x > y);
+            st.regs.cmp_op(a, b, c, |x, y| x > y);
             *ir += 1;
         }
         Instruction::Jmp(a) => {
-            *ir = regs.get_ir(a);
+            *ir = st.regs.get_ir(a);
         }
         Instruction::Jt(a, b) => {
-            if regs.get_ir(a) != 0 {
-                *ir = regs.get_ir(b);
+            if st.regs.get_ir(a) != 0 {
+                *ir = st.regs.get_ir(b);
             } else {
                 *ir += 1;
             }
         }
         Instruction::Jf(a, b) => {
-            if regs.get_ir(a) == 0 {
-                *ir = regs.get_ir(b);
+            if st.regs.get_ir(a) == 0 {
+                *ir = st.regs.get_ir(b);
             } else {
                 *ir += 1;
             }
         }
         Instruction::Add(a, b, c) => {
-            regs.binary_op(a, b, c, |x, y| ((x as u32 + y as u32) % 32768) as u16);
+            st.regs.binary_op(a, b, c, |x, y| ((x as u32 + y as u32) % 32768) as u16);
             *ir += 1;
         }
         Instruction::Mult(a, b, c) => {
-            regs.binary_op(a, b, c, |x, y| ((x as u32 * y as u32) % 32768) as u16);
+            st.regs.binary_op(a, b, c, |x, y| ((x as u32 * y as u32) % 32768) as u16);
             *ir += 1;
         }
         Instruction::Mod(a, b, c) => {
-            regs.binary_op(a, b, c, |x, y| ((x as u32 / y as u32) % 32768) as u16);
+            st.regs.binary_op(a, b, c, |x, y| ((x as u32 / y as u32) % 32768) as u16);
             *ir += 1;
         }
         Instruction::And(a, b, c) => {
-            regs.binary_op(a, b, c, |x, y| x & y);
+            st.regs.binary_op(a, b, c, |x, y| x & y);
             *ir += 1;
         }
         Instruction::Or(a, b, c) => {
-            regs.binary_op(a, b, c, |x, y| x | y);
+            st.regs.binary_op(a, b, c, |x, y| x | y);
             *ir += 1;
         }
         Instruction::Not(a, b) => {
-            regs.unary_op(a, b, |x| !x);
+            st.regs.unary_op(a, b, |x| !x);
             *ir += 1;
         }
         Instruction::RMem(a, b) => {
-            println!("{}: {:?} - NOT IMPLEMENTED", ir, ins);
+            st.regs.set_ir(a, st.mem.read(st.regs.get_ir(b)));
             *ir += 1;
         }
         Instruction::WMem(a, b) => {
-            println!("{}: {:?} - NOT IMPLEMENTED", ir, ins);
+            st.mem.write(st.regs.get_ir(a), st.regs.get_ir(b));
             *ir += 1;
         }
         Instruction::Call(a) => {
-            stack.push(*ir + 1);
-            *ir = regs.get_ir(a);
+            st.stack.push(*ir + 1);
+            *ir = st.regs.get_ir(a);
         }
         Instruction::Ret => {
-            println!("{}: {:?} - NOT IMPLEMENTED", ir, ins);
-            *ir += 1;
+            let address = st.stack.pop().expect("Stack is empty");
+            *ir = address;
         }
         Instruction::Out(a) => {
-            print!("{}", regs.get_ir(a) as u8 as char);
+            print!("{}", st.regs.get_ir(a) as u8 as char);
             *ir += 1;
         }
         Instruction::In(a) => {
@@ -143,14 +143,14 @@ fn main() {
     let instructions = instruction::build(&bin);
 
     let mut storage = Storage::new();
-    storage.regs.set(0, 32766);
+    storage.regs.set_ir(IntReg::Register(0), 32766);
     // registers.set(1, 1);
 
     let mut ir: u16 = 0;
     while ir < instructions.len() as u16 {
         let ins = instructions[ir as usize];
-        println!("{}: {:?}; Regs={:?}", ir, ins, storage.regs);
-        execute(&ins, &mut ir, &mut storage.regs, &mut storage.stack);
+        // println!("{}: {:?}; Regs={:?}", ir, ins, storage.regs);
+        execute(&ins, &mut ir, &mut storage);
     }
 }
 
