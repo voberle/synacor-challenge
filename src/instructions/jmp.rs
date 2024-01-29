@@ -13,9 +13,13 @@ pub struct Jmp {
 }
 
 impl Jmp {
+    fn new(a: IntReg) -> Self {
+        Self { a }
+    }
+
     pub fn inst<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
         let v = *iter.next().unwrap();
-        Box::new(Self { a: IntReg::new(v) })
+        Box::new(Self::new(IntReg::new(v)))
     }
 }
 
@@ -33,4 +37,12 @@ impl fmt::Display for Jmp {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Jmp to {}", self.a)
     }
+}
+
+#[test]
+fn test_exec() {
+    let ins = Jmp::new(IntReg::Value(37));
+    let mut ir = 100;
+    ins.exec(&mut ir, &mut Storage::new(), &mut Terminal::new(false));
+    assert_eq!(ir, 37);
 }

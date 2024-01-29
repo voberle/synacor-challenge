@@ -8,12 +8,17 @@ use crate::terminal::Terminal;
 // noop: 21
 // no operation
 pub struct Noop {
+    // Used to save the opcode when Noop is used to replaced an unimplemented instruction.
     opcode: u8,
 }
 
 impl Noop {
+    fn new<const OPCODE: u8>() -> Self {
+        Self { opcode: OPCODE }
+    }
+
     pub fn inst<const OPCODE: u8>(_iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        Box::new(Self { opcode: OPCODE })
+        Box::new(Self::new::<OPCODE>())
     }
 }
 

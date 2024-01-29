@@ -13,9 +13,13 @@ pub struct Out {
 }
 
 impl Out {
+    fn new(a: IntReg) -> Self {
+        Self { a }
+    }
+
     pub fn inst<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
         let v = *iter.next().unwrap();
-        Box::new(Self { a: IntReg::new(v) })
+        Box::new(Self::new(IntReg::new(v)))
     }
 }
 
