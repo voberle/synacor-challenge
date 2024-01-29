@@ -1,3 +1,4 @@
+use std::fmt;
 use std::slice::Iter;
 
 use crate::instructions::Instruction;
@@ -9,7 +10,7 @@ use crate::terminal::Terminal;
 pub struct Halt {}
 
 impl Halt {
-    pub fn new(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+    pub fn inst(_iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
         Box::new(Self {})
     }
 }
@@ -19,7 +20,13 @@ impl Instruction for Halt {
         "halt"
     }
 
-    fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal) {
+    fn exec(&self, _ir: &mut u16, _st: &mut Storage, _term: &mut Terminal) {
         std::process::exit(0);
+    }
+}
+
+impl fmt::Display for Halt {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Halt")
     }
 }

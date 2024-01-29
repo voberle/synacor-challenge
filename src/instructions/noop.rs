@@ -1,3 +1,4 @@
+use std::fmt;
 use std::slice::Iter;
 
 use crate::instructions::Instruction;
@@ -9,7 +10,7 @@ use crate::terminal::Terminal;
 pub struct Noop {}
 
 impl Noop {
-    pub fn new(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+    pub fn inst(_iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
         Box::new(Self {})
     }
 }
@@ -19,7 +20,13 @@ impl Instruction for Noop {
         "noop"
     }
 
-    fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal) {
+    fn exec(&self, ir: &mut u16, _st: &mut Storage, _term: &mut Terminal) {
         *ir += 1;
+    }
+}
+
+impl fmt::Display for Noop {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Noop")
     }
 }

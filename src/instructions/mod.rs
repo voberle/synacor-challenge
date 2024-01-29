@@ -2,39 +2,41 @@ mod halt;
 mod noop;
 mod out;
 
-use std::slice::Iter;
+use std::{fmt::Display, slice::Iter};
 
 use crate::{storage::Storage, terminal::Terminal};
 
-pub trait Instruction {
+pub trait Instruction: Display {
     fn name(&self) -> &'static str;
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal);
 }
 
 fn unimplemented(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-    noop::Noop::new(iter)
+    noop::Noop::inst(iter)
 }
 
 fn unimplemented_1(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
     iter.next();
-    noop::Noop::new(iter)
+    noop::Noop::inst(iter)
 }
 
 fn unimplemented_2(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
     iter.next();
     iter.next();
-    noop::Noop::new(iter)
+    noop::Noop::inst(iter)
 }
 
 fn unimplemented_3(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
     iter.next();
     iter.next();
     iter.next();
-    noop::Noop::new(iter)
+    noop::Noop::inst(iter)
 }
 
-const BUILDERS: [fn(&mut Iter<'_, u16>) -> Box<dyn Instruction>; 22] = [
-    halt::Halt::new, // 0
+type InstanceFn = fn(&mut Iter<'_, u16>) -> Box<dyn Instruction>;
+
+const BUILDERS: [InstanceFn; 22] = [
+    halt::Halt::inst, // 0
     unimplemented_2, // 1
     unimplemented_1, // 2
     unimplemented_1, // 3
@@ -53,11 +55,12 @@ const BUILDERS: [fn(&mut Iter<'_, u16>) -> Box<dyn Instruction>; 22] = [
     unimplemented_2, // 16
     unimplemented_1, // 17
     unimplemented,   // 18
-    out::Out::new,   // 19
+    out::Out::inst,   // 19
     unimplemented_1, // 20
-    noop::Noop::new, // 21
+    noop::Noop::inst, // 21
 ];
 
+// Build the list of instructions contained in the binary.
 pub fn build(bin: &[u16]) -> Vec<Box<dyn Instruction>> {
     let mut instructions: Vec<Box<dyn Instruction>> = Vec::new();
     let mut iter = bin.iter();

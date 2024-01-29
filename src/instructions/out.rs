@@ -1,3 +1,4 @@
+use std::fmt;
 use std::slice::Iter;
 
 use crate::instructions::Instruction;
@@ -12,7 +13,7 @@ pub struct Out {
 }
 
 impl Out {
-    pub fn new(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+    pub fn inst(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
         let v = *iter.next().unwrap();
         Box::new(Self { a: IntReg::new(v) })
     }
@@ -26,5 +27,14 @@ impl Instruction for Out {
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal) {
         term.write(st.regs.get_ir(self.a) as u8 as char);
         *ir += 1;
+    }
+}
+
+impl fmt::Display for Out {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self.a {
+            IntReg::Value(v) => write!(f, "Out: {} ({})", self.a, v as u8 as char),
+            IntReg::Register(r) => write!(f, "Out: {} ({})", self.a, r),
+        }
     }
 }
