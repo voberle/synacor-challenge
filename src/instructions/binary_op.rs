@@ -1,7 +1,7 @@
 use std::fmt;
 use std::slice::Iter;
 
-use crate::instructions::noop::{self, Noop};
+use crate::instructions::noop;
 use crate::instructions::Instruction;
 use crate::intreg::IntReg;
 use crate::register::RegNb;

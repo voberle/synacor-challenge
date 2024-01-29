@@ -3,6 +3,7 @@ mod eq;
 mod halt;
 mod jmp;
 mod jump_if;
+mod mem_access;
 mod noop;
 mod out;
 
@@ -55,8 +56,8 @@ const BUILDERS: [InstanceFn; 22] = [
     unimplemented_3::<12>,
     unimplemented_3::<13>,
     unimplemented_2::<14>,
-    unimplemented_2::<15>,
-    unimplemented_2::<16>,
+    mem_access::MemAccess::inst_rmem::<15>,
+    mem_access::MemAccess::inst_wmem::<16>,
     unimplemented_1::<17>,
     unimplemented::<18>,
     out::Out::inst::<19>,
