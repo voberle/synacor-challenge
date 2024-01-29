@@ -7,11 +7,13 @@ use crate::terminal::Terminal;
 
 // noop: 21
 // no operation
-pub struct Noop {}
+pub struct Noop {
+    opcode: u8,
+}
 
 impl Noop {
-    pub fn inst(_iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        Box::new(Self {})
+    pub fn inst<const OPCODE: u8>(_iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+        Box::new(Self { opcode: OPCODE })
     }
 }
 
@@ -27,6 +29,10 @@ impl Instruction for Noop {
 
 impl fmt::Display for Noop {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Noop")
+        if self.opcode == 21 {
+            write!(f, "Noop")
+        } else {
+            write!(f, "NOT IMPL: {}", self.opcode)
+        }
     }
 }

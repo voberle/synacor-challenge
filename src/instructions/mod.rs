@@ -11,53 +11,53 @@ pub trait Instruction: Display {
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal);
 }
 
-fn unimplemented(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-    noop::Noop::inst(iter)
+fn unimplemented<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+    noop::Noop::inst::<OPCODE>(iter)
 }
 
-fn unimplemented_1(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+fn unimplemented_1<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
     iter.next();
-    noop::Noop::inst(iter)
+    noop::Noop::inst::<OPCODE>(iter)
 }
 
-fn unimplemented_2(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+fn unimplemented_2<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
     iter.next();
     iter.next();
-    noop::Noop::inst(iter)
+    noop::Noop::inst::<OPCODE>(iter)
 }
 
-fn unimplemented_3(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+fn unimplemented_3<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
     iter.next();
     iter.next();
     iter.next();
-    noop::Noop::inst(iter)
+    noop::Noop::inst::<OPCODE>(iter)
 }
 
 type InstanceFn = fn(&mut Iter<'_, u16>) -> Box<dyn Instruction>;
 
 const BUILDERS: [InstanceFn; 22] = [
-    halt::Halt::inst, // 0
-    unimplemented_2,  // 1
-    unimplemented_1,  // 2
-    unimplemented_1,  // 3
-    unimplemented_3,  // 4
-    unimplemented_3,  // 5
-    unimplemented_1,  // 6
-    unimplemented_2,  // 7
-    unimplemented_2,  // 8
-    unimplemented_3,  // 9
-    unimplemented_3,  // 10
-    unimplemented_3,  // 11
-    unimplemented_3,  // 12
-    unimplemented_3,  // 13
-    unimplemented_2,  // 14
-    unimplemented_2,  // 15
-    unimplemented_2,  // 16
-    unimplemented_1,  // 17
-    unimplemented,    // 18
-    out::Out::inst,   // 19
-    unimplemented_1,  // 20
-    noop::Noop::inst, // 21
+    halt::Halt::inst::<0>,
+    unimplemented_2::<1>,
+    unimplemented_1::<2>,
+    unimplemented_1::<3>,
+    unimplemented_3::<4>,
+    unimplemented_3::<5>,
+    unimplemented_1::<6>,
+    unimplemented_2::<7>,
+    unimplemented_2::<8>,
+    unimplemented_3::<9>,
+    unimplemented_3::<10>,
+    unimplemented_3::<11>,
+    unimplemented_3::<12>,
+    unimplemented_3::<13>,
+    unimplemented_2::<14>,
+    unimplemented_2::<15>,
+    unimplemented_2::<16>,
+    unimplemented_1::<17>,
+    unimplemented::<18>,
+    out::Out::inst::<19>,
+    unimplemented_1::<20>,
+    noop::Noop::inst::<21>,
 ];
 
 // Build the list of instructions contained in the binary.

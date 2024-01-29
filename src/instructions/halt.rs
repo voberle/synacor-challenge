@@ -10,7 +10,7 @@ use crate::terminal::Terminal;
 pub struct Halt {}
 
 impl Halt {
-    pub fn inst(_iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+    pub fn inst<const OPCODE: u8>(_iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
         Box::new(Self {})
     }
 }
