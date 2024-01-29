@@ -1,6 +1,7 @@
 use std::fmt;
 use std::slice::Iter;
 
+use crate::instructions::noop::{self, Noop};
 use crate::instructions::Instruction;
 use crate::intreg::IntReg;
 use crate::register::RegNb;
@@ -63,7 +64,17 @@ impl BinaryOp {
     }
 
     pub fn inst_add<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let a = RegNb::from(*iter.next().unwrap());
+        // For "add", spec says "assign into <a>", while for the other operations
+        // it says "store into <a>".
+        let a_val = *iter.next().unwrap();
+        if a_val < 32768 {
+            eprintln!("Warning: <a> for add is not a register: {}", a_val);
+            // Skipping for now. IS IT THE RIGHT THING TO DO?
+            iter.next();
+            iter.next();
+            return noop::Noop::inst::<OPCODE>(iter);
+        }
+        let a = RegNb::from(a_val);
         let b = IntReg::new(*iter.next().unwrap());
         let c = IntReg::new(*iter.next().unwrap());
         Box::new(Self::add(a, b, c))

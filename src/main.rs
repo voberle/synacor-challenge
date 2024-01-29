@@ -17,6 +17,7 @@ const DEBUG: bool = true;
 fn main() {
     let bin = load_bin();
     let instructions = build(&bin);
+    println!("Loaded {} instructions", instructions.len());
 
     let mut storage = Storage::new();
     let mut terminal = Terminal::new(!DEBUG);

@@ -69,11 +69,15 @@ pub fn build(bin: &[u16]) -> Vec<Box<dyn Instruction>> {
     let mut instructions: Vec<Box<dyn Instruction>> = Vec::new();
     let mut iter = bin.iter();
     while let Some(opcode) = iter.next() {
-        // println!("{}", opcode);
         if !(0..=21).contains(opcode) {
-            break;
+            println!("Unknown opcode: {}", opcode);
+            // println!("Unknown {}, followed by {}, {}", opcode, *iter.next().unwrap(), *iter.next().unwrap());
+            // break;
+            continue;
         }
-        instructions.push(BUILDERS[*opcode as usize](&mut iter))
+        let ins = BUILDERS[*opcode as usize](&mut iter);
+        println!("{}", ins);
+        instructions.push(ins);
     }
     instructions
 }
