@@ -1,11 +1,13 @@
 mod binary;
 mod codes;
 mod instruction;
+mod intreg;
 mod register;
 mod storage;
 
 use binary::load_bin;
-use instruction::{Instruction, IntReg};
+use instruction::Instruction;
+use intreg::IntReg;
 use register::RegNb;
 use storage::Storage;
 
