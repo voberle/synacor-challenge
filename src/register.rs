@@ -10,7 +10,7 @@ pub struct RegNb {
 }
 
 impl RegNb {
-    fn new(value: usize) -> Self {
+    pub fn new(value: usize) -> Self {
         assert!((0..=7).contains(&value));
         Self { value }
     }
@@ -73,8 +73,8 @@ impl Registers {
         }
     }
 
-    pub fn cmp_op(&mut self, a: IntReg, b: IntReg, c: IntReg, cmp_fn: fn(u16, u16) -> bool) {
-        self.set_ir(
+    pub fn cmp_op(&mut self, a: RegNb, b: IntReg, c: IntReg, cmp_fn: fn(u16, u16) -> bool) {
+        self.set(
             a,
             if cmp_fn(self.get_ir(b), self.get_ir(c)) {
                 1
