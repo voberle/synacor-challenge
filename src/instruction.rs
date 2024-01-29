@@ -1,15 +1,17 @@
+use crate::register::RegNb;
+
 // The numbers in the binary format can mean two things: A literal value or a register number.
 #[derive(Debug, Clone, Copy)]
 pub enum IntReg {
     Value(u16),
-    Register(u16),
+    Register(RegNb),
 }
 
 impl IntReg {
     fn new(n: u16) -> Self {
         match n {
             0..=32767 => IntReg::Value(n),
-            32768..=32775 => IntReg::Register(n - 32768),
+            32768..=32775 => IntReg::Register(RegNb::from(n)),
             _ => panic!("Invalid number"),
         }
     }
@@ -66,7 +68,7 @@ pub enum Instruction {
 
 macro_rules! nreg {
     ($iter:expr) => {
-        dbg!(*$iter.next().unwrap()) - 32768
+        RegNb::from(*$iter.next().unwrap())
     };
 }
 

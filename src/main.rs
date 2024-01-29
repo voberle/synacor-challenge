@@ -1,10 +1,12 @@
 use std::fs;
 
-mod codes;
+mod codes_check;
 mod instruction;
 mod storage;
+pub mod register;
 
 use instruction::{Instruction, IntReg};
+use register::RegNb;
 use storage::Storage;
 
 fn load_bin() -> Vec<u16> {
@@ -24,8 +26,6 @@ fn code0() -> String {
 
 #[cfg(test)]
 fn code1(instructions: &[Instruction]) -> String {
-    use crate::instruction::IntReg;
-
     let welcome_msg: String = instructions
         .iter()
         .take_while(|ins| !matches!(ins, Instruction::Halt))
@@ -143,7 +143,7 @@ fn main() {
     let instructions = instruction::build(&bin);
 
     let mut storage = Storage::new();
-    storage.regs.set_ir(IntReg::Register(0), 32766);
+    storage.regs.set_ir(IntReg::Register(RegNb::from(0)), 32766);
     // registers.set(1, 1);
 
     let mut ir: u16 = 0;
@@ -160,13 +160,13 @@ mod tests {
 
     #[test]
     fn test_code0() {
-        assert!(codes::verify_code(0, &code0()));
+        assert!(codes_check::verify_code(0, &code0()));
     }
 
     #[test]
     fn test_code1() {
         let bin = load_bin();
         let instructions = instruction::build(&bin);
-        assert!(codes::verify_code(1, &code1(&instructions)));
+        assert!(codes_check::verify_code(1, &code1(&instructions)));
     }
 }
