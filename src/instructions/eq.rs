@@ -41,7 +41,7 @@ impl Instruction for Eq {
 
 impl fmt::Display for Eq {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Eq {} = 1 if {} == {}", self.a, self.b, self.c)
+        write!(f, "{}: {} = 1 if {} == {}", self.name(), self.a, self.b, self.c)
     }
 }
 

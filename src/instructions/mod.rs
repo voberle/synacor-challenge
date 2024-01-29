@@ -1,3 +1,4 @@
+mod binary_op;
 mod eq;
 mod halt;
 mod jmp;
@@ -48,7 +49,7 @@ const BUILDERS: [InstanceFn; 22] = [
     jmp::Jmp::inst::<6>,
     jump_if::JumpIf::inst_jt::<7>,
     jump_if::JumpIf::inst_jf::<8>,
-    unimplemented_3::<9>,
+    binary_op::BinaryOp::inst_add::<9>,
     unimplemented_3::<10>,
     unimplemented_3::<11>,
     unimplemented_3::<12>,

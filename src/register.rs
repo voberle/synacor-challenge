@@ -84,10 +84,6 @@ impl Registers {
         );
     }
 
-    pub fn binary_op(&mut self, a: IntReg, b: IntReg, c: IntReg, binary_fn: fn(u16, u16) -> u16) {
-        self.set_ir(a, binary_fn(self.get_ir(b), self.get_ir(c)));
-    }
-
     pub fn unary_op(&mut self, a: IntReg, b: IntReg, unary_fn: fn(u16) -> u16) {
         self.set_ir(a, unary_fn(self.get_ir(b)));
     }

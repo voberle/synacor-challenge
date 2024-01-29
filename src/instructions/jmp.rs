@@ -35,7 +35,7 @@ impl Instruction for Jmp {
 
 impl fmt::Display for Jmp {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Jmp to {}", self.a)
+        write!(f, "{}: To {}", self.name(), self.a)
     }
 }
 
