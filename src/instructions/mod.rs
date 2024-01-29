@@ -37,26 +37,26 @@ type InstanceFn = fn(&mut Iter<'_, u16>) -> Box<dyn Instruction>;
 
 const BUILDERS: [InstanceFn; 22] = [
     halt::Halt::inst, // 0
-    unimplemented_2, // 1
-    unimplemented_1, // 2
-    unimplemented_1, // 3
-    unimplemented_3, // 4
-    unimplemented_3, // 5
-    unimplemented_1, // 6
-    unimplemented_2, // 7
-    unimplemented_2, // 8
-    unimplemented_3, // 9
-    unimplemented_3, // 10
-    unimplemented_3, // 11
-    unimplemented_3, // 12
-    unimplemented_3, // 13
-    unimplemented_2, // 14
-    unimplemented_2, // 15
-    unimplemented_2, // 16
-    unimplemented_1, // 17
-    unimplemented,   // 18
+    unimplemented_2,  // 1
+    unimplemented_1,  // 2
+    unimplemented_1,  // 3
+    unimplemented_3,  // 4
+    unimplemented_3,  // 5
+    unimplemented_1,  // 6
+    unimplemented_2,  // 7
+    unimplemented_2,  // 8
+    unimplemented_3,  // 9
+    unimplemented_3,  // 10
+    unimplemented_3,  // 11
+    unimplemented_3,  // 12
+    unimplemented_3,  // 13
+    unimplemented_2,  // 14
+    unimplemented_2,  // 15
+    unimplemented_2,  // 16
+    unimplemented_1,  // 17
+    unimplemented,    // 18
     out::Out::inst,   // 19
-    unimplemented_1, // 20
+    unimplemented_1,  // 20
     noop::Noop::inst, // 21
 ];
 

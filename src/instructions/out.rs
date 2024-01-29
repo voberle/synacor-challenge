@@ -33,7 +33,19 @@ impl Instruction for Out {
 impl fmt::Display for Out {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self.a {
-            IntReg::Value(v) => write!(f, "Out: {} ({})", self.a, v as u8 as char),
+            IntReg::Value(v) => {
+                let c = v as u8 as char;
+                write!(
+                    f,
+                    "Out: {} ({})",
+                    self.a,
+                    if c == '\n' {
+                        "\\n".to_string()
+                    } else {
+                        c.to_string()
+                    }
+                )
+            }
             IntReg::Register(r) => write!(f, "Out: {} ({})", self.a, r),
         }
     }

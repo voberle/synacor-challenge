@@ -11,7 +11,7 @@ use instructions::build;
 use storage::Storage;
 use terminal::Terminal;
 
-const DEBUG: bool = false;
+const DEBUG: bool = true;
 
 fn main() {
     let bin = load_bin();
