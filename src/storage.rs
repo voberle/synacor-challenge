@@ -1,12 +1,14 @@
-use crate::{instruction::IntReg, register::Registers};
+use crate::register::Registers;
 
 pub struct Memory {
-    mem: Vec<u16>
+    mem: Vec<u16>,
 }
 
 impl Memory {
     pub fn new() -> Self {
-        Self { mem: vec![0; 2_usize.pow(15)] }
+        Self {
+            mem: vec![0; 2_usize.pow(15)],
+        }
     }
 
     pub fn read(&self, a: u16) -> u16 {

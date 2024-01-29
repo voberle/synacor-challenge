@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 // MD5 hashes of the 8 codes produced by the challenge.
 // echo -n "<Code Here>" | md5sum
 const CODES: [&str; 8] = [

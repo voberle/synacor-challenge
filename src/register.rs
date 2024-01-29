@@ -6,7 +6,7 @@ use crate::instruction::IntReg;
 // and provides helper functions such as more readable display.
 #[derive(Debug, Clone, Copy)]
 pub struct RegNb {
-    value: usize
+    value: usize,
 }
 
 impl RegNb {

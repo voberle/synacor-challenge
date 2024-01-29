@@ -1,50 +1,11 @@
-use std::fs;
-
-mod codes_check;
+mod codes;
 mod instruction;
+mod register;
 mod storage;
-pub mod register;
 
-use instruction::{Instruction, IntReg};
+use instruction::{load_bin, Instruction, IntReg};
 use register::RegNb;
 use storage::Storage;
-
-fn load_bin() -> Vec<u16> {
-    let bytes = fs::read("resources/challenge.bin").unwrap();
-    // Converting to u16 with safe code
-    bytes
-        .chunks_exact(2)
-        .map(|a| u16::from_le_bytes([a[0], a[1]]))
-        .collect()
-}
-
-#[cfg(test)]
-fn code0() -> String {
-    // First code was in the spec.
-    "LDOb7UGhTi".to_string()
-}
-
-#[cfg(test)]
-fn code1(instructions: &[Instruction]) -> String {
-    let welcome_msg: String = instructions
-        .iter()
-        .take_while(|ins| !matches!(ins, Instruction::Halt))
-        .flat_map(|ins| {
-            if let Instruction::Out(a) = ins {
-                if let IntReg::Value(v) = a {
-                    Some(*v as u8 as char)
-                } else {
-                    None
-                }
-            } else {
-                None
-            }
-        })
-        .collect();
-    println!("{}", welcome_msg);
-    let welcome_re = regex::Regex::new(r"into the challenge website: (\w+)").unwrap();
-    welcome_re.captures(&welcome_msg).unwrap()[1].to_string()
-}
 
 fn execute(ins: &Instruction, ir: &mut u16, st: &mut Storage) {
     match *ins {
@@ -87,15 +48,18 @@ fn execute(ins: &Instruction, ir: &mut u16, st: &mut Storage) {
             }
         }
         Instruction::Add(a, b, c) => {
-            st.regs.binary_op(a, b, c, |x, y| ((x as u32 + y as u32) % 32768) as u16);
+            st.regs
+                .binary_op(a, b, c, |x, y| ((x as u32 + y as u32) % 32768) as u16);
             *ir += 1;
         }
         Instruction::Mult(a, b, c) => {
-            st.regs.binary_op(a, b, c, |x, y| ((x as u32 * y as u32) % 32768) as u16);
+            st.regs
+                .binary_op(a, b, c, |x, y| ((x as u32 * y as u32) % 32768) as u16);
             *ir += 1;
         }
         Instruction::Mod(a, b, c) => {
-            st.regs.binary_op(a, b, c, |x, y| ((x as u32 / y as u32) % 32768) as u16);
+            st.regs
+                .binary_op(a, b, c, |x, y| ((x as u32 / y as u32) % 32768) as u16);
             *ir += 1;
         }
         Instruction::And(a, b, c) => {
@@ -151,22 +115,5 @@ fn main() {
         let ins = instructions[ir as usize];
         // println!("{}: {:?}; Regs={:?}", ir, ins, storage.regs);
         execute(&ins, &mut ir, &mut storage);
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_code0() {
-        assert!(codes_check::verify_code(0, &code0()));
-    }
-
-    #[test]
-    fn test_code1() {
-        let bin = load_bin();
-        let instructions = instruction::build(&bin);
-        assert!(codes_check::verify_code(1, &code1(&instructions)));
     }
 }
