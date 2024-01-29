@@ -1,5 +1,4 @@
 use std::fmt;
-use std::slice::Iter;
 
 use crate::instructions::Instruction;
 use crate::intreg::IntReg;
@@ -18,6 +17,8 @@ pub struct JumpIf {
 }
 
 impl JumpIf {
+    const ARGS_COUNT: u16 = 2;
+
     fn new(name: &'static str, cond_fn: fn(u16) -> bool, a: IntReg, b: IntReg) -> Self {
         Self {
             name,
@@ -35,15 +36,17 @@ impl JumpIf {
         Self::new("jf", |v| v == 0, a, b)
     }
 
-    pub fn inst_jt<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let a = IntReg::new(*iter.next().unwrap());
-        let b = IntReg::new(*iter.next().unwrap());
+    pub fn inst_jt<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = IntReg::new(storage.mem.read(address + 1));
+        let b = IntReg::new(storage.mem.read(address + 2));
         Box::new(Self::jt(a, b))
     }
 
-    pub fn inst_jf<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let a = IntReg::new(*iter.next().unwrap());
-        let b = IntReg::new(*iter.next().unwrap());
+    pub fn inst_jf<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = IntReg::new(storage.mem.read(address + 1));
+        let b = IntReg::new(storage.mem.read(address + 2));
         Box::new(Self::jf(a, b))
     }
 }
@@ -57,7 +60,7 @@ impl Instruction for JumpIf {
         if (self.cond_fn)(st.regs.get_ir(self.a)) {
             *ir = st.regs.get_ir(self.b);
         } else {
-            *ir += 1;
+            *ir += 1 + Self::ARGS_COUNT;
         }
     }
 }
@@ -88,7 +91,7 @@ mod test {
         storage.regs.set(RegNb::new(2), 0);
         let mut ir = 100;
         ins.exec(&mut ir, &mut storage, &mut terminal);
-        assert_eq!(ir, 101);
+        assert_eq!(ir, 103);
 
         storage.regs.set(RegNb::new(2), 45);
         ins.exec(&mut ir, &mut storage, &mut terminal);
@@ -107,6 +110,6 @@ mod test {
 
         storage.regs.set(RegNb::new(2), 45);
         ins.exec(&mut ir, &mut storage, &mut terminal);
-        assert_eq!(ir, 38);
+        assert_eq!(ir, 40);
     }
 }

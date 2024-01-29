@@ -5,13 +5,17 @@ use crate::intreg::IntReg;
 use crate::storage::Storage;
 use crate::terminal::Terminal;
 
-// out: 19 a
-// write the character represented by ascii code <a> to the terminal
-pub struct Out {
+// in: 20 a
+//   read a character from the terminal and write its ascii code to <a>;
+// it can be assumed that once input starts, it will continue until
+// a newline is encountered; this means that you can safely read whole
+// lines from the keyboard instead of having to figure out how to read
+// individual characters
+pub struct In {
     a: IntReg,
 }
 
-impl Out {
+impl In {
     const ARGS_COUNT: u16 = 1;
 
     fn new(a: IntReg) -> Self {
@@ -25,34 +29,23 @@ impl Out {
     }
 }
 
-impl Instruction for Out {
+impl Instruction for In {
     fn name(&self) -> &'static str {
-        "out"
+        "in"
     }
 
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal) {
-        term.write(st.regs.get_ir(self.a) as u8 as char);
+        // TODO
         *ir += 1 + Self::ARGS_COUNT;
     }
 }
 
-impl fmt::Display for Out {
+impl fmt::Display for In {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self.a {
-            IntReg::Value(v) => {
-                let c = v as u8 as char;
                 write!(
                     f,
-                    "Out: {} ({})",
-                    self.a,
-                    if c == '\n' {
-                        "\\n".to_string()
-                    } else {
-                        c.to_string()
-                    }
+                    "In: {}",
+                    self.a
                 )
-            }
-            IntReg::Register(r) => write!(f, "Out: {} ({})", self.a, r),
-        }
     }
 }

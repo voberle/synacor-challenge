@@ -1,5 +1,4 @@
 use std::fmt;
-use std::slice::Iter;
 
 use crate::instructions::Instruction;
 use crate::intreg::IntReg;
@@ -18,6 +17,8 @@ pub struct MemAccess {
 }
 
 impl MemAccess {
+    const ARGS_COUNT: u16 = 2;
+
     fn new(name: &'static str, write: bool, a: IntReg, b: IntReg) -> Self {
         Self { name, write, a, b }
     }
@@ -30,15 +31,17 @@ impl MemAccess {
         Self::new("wmem", true, a, b)
     }
 
-    pub fn inst_rmem<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let a = IntReg::new(*iter.next().unwrap());
-        let b = IntReg::new(*iter.next().unwrap());
+    pub fn inst_rmem<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = IntReg::new(storage.mem.read(address + 1));
+        let b = IntReg::new(storage.mem.read(address + 2));
         Box::new(Self::rmem(a, b))
     }
 
-    pub fn inst_wmem<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let a = IntReg::new(*iter.next().unwrap());
-        let b = IntReg::new(*iter.next().unwrap());
+    pub fn inst_wmem<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = IntReg::new(storage.mem.read(address + 1));
+        let b = IntReg::new(storage.mem.read(address + 2));
         Box::new(Self::wmem(a, b))
     }
 }
@@ -54,7 +57,7 @@ impl Instruction for MemAccess {
         } else {
             st.regs.set_ir(self.a, st.mem.read(st.regs.get_ir(self.b)));
         }
-        *ir += 1;
+        *ir += 1 + Self::ARGS_COUNT;
     }
 }
 
@@ -86,7 +89,7 @@ mod test {
         let mut ir = 100;
         ins.exec(&mut ir, &mut storage, &mut terminal);
         assert_eq!(storage.regs.get(RegNb::new(2)), 567);
-        assert_eq!(ir, 101);
+        assert_eq!(ir, 103);
     }
 
     #[test]
@@ -98,6 +101,6 @@ mod test {
         let mut ir = 100;
         ins.exec(&mut ir, &mut storage, &mut terminal);
         assert_eq!(storage.mem.read(1000), 8660);
-        assert_eq!(ir, 101);
+        assert_eq!(ir, 103);
     }
 }

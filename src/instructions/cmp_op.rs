@@ -28,6 +28,8 @@ fn gt(x: u16, y: u16) -> bool {
 }
 
 impl CmpOp {
+    const ARGS_COUNT: u16 = 3;
+
     fn new(
         name: &'static str,
         cmp_fn: fn(u16, u16) -> bool,
@@ -52,17 +54,19 @@ impl CmpOp {
         Self::new("gt", gt, a, b, c)
     }
 
-    pub fn inst_eq<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let a = RegNb::from(*iter.next().unwrap());
-        let b = IntReg::new(*iter.next().unwrap());
-        let c = IntReg::new(*iter.next().unwrap());
+    pub fn inst_eq<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = RegNb::from(storage.mem.read(address + 1));
+        let b = IntReg::new(storage.mem.read(address + 2));
+        let c = IntReg::new(storage.mem.read(address + 3));
         Box::new(Self::eq(a, b, c))
     }
 
-    pub fn inst_gt<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let a = RegNb::from(*iter.next().unwrap());
-        let b = IntReg::new(*iter.next().unwrap());
-        let c = IntReg::new(*iter.next().unwrap());
+    pub fn inst_gt<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = RegNb::from(storage.mem.read(address + 1));
+        let b = IntReg::new(storage.mem.read(address + 2));
+        let c = IntReg::new(storage.mem.read(address + 3));
         Box::new(Self::gt(a, b, c))
     }
 
@@ -89,7 +93,7 @@ impl Instruction for CmpOp {
                 0
             },
         );
-        *ir += 1;
+        *ir += 1 + Self::ARGS_COUNT;
     }
 }
 

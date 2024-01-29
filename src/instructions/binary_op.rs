@@ -1,7 +1,5 @@
 use std::fmt;
-use std::slice::Iter;
 
-use crate::instructions::noop;
 use crate::instructions::Instruction;
 use crate::intreg::IntReg;
 use crate::register::RegNb;
@@ -47,6 +45,8 @@ fn or(x: u16, y: u16) -> u16 {
 }
 
 impl BinaryOp {
+    const ARGS_COUNT: u16 = 3;
+
     fn new(
         name: &'static str,
         binary_fn: fn(u16, u16) -> u16,
@@ -83,56 +83,45 @@ impl BinaryOp {
         Self::new("or", or, a, b, c)
     }
 
-    pub fn inst_add<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+    pub fn inst_add<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
         // For "add", spec says "assign into <a>", while for the other operations
         // it says "store into <a>".
-        let a_val = *iter.next().unwrap();
-        if a_val < 32768 {
-            eprintln!("Warning: <a> for add is not a register: {}", a_val);
-            // Skipping for now. IS IT THE RIGHT THING TO DO?
-            iter.next();
-            iter.next();
-            return noop::Noop::inst::<OPCODE>(iter);
-        }
-        let a = RegNb::from(a_val);
-        let b = IntReg::new(*iter.next().unwrap());
-        let c = IntReg::new(*iter.next().unwrap());
+        let a = RegNb::from(storage.mem.read(address + 1));
+        let b = IntReg::new(storage.mem.read(address + 2));
+        let c = IntReg::new(storage.mem.read(address + 3));
         Box::new(Self::add(a, b, c))
     }
 
-    pub fn inst_mult<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let a = RegNb::from(*iter.next().unwrap());
-        let b = IntReg::new(*iter.next().unwrap());
-        let c = IntReg::new(*iter.next().unwrap());
+    pub fn inst_mult<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = RegNb::from(storage.mem.read(address + 1));
+        let b = IntReg::new(storage.mem.read(address + 2));
+        let c = IntReg::new(storage.mem.read(address + 3));
         Box::new(Self::mult(a, b, c))
     }
 
-    pub fn inst_mod<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let a = RegNb::from(*iter.next().unwrap());
-        let b = IntReg::new(*iter.next().unwrap());
-        let c = IntReg::new(*iter.next().unwrap());
+    pub fn inst_mod<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = RegNb::from(storage.mem.read(address + 1));
+        let b = IntReg::new(storage.mem.read(address + 2));
+        let c = IntReg::new(storage.mem.read(address + 3));
         Box::new(Self::modulo(a, b, c))
     }
 
-    pub fn inst_and<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let a = RegNb::from(*iter.next().unwrap());
-        let b = IntReg::new(*iter.next().unwrap());
-        let c = IntReg::new(*iter.next().unwrap());
+    pub fn inst_and<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = RegNb::from(storage.mem.read(address + 1));
+        let b = IntReg::new(storage.mem.read(address + 2));
+        let c = IntReg::new(storage.mem.read(address + 3));
         Box::new(Self::and(a, b, c))
     }
 
-    pub fn inst_or<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let a_val = *iter.next().unwrap();
-        if a_val < 32768 {
-            eprintln!("Warning: <a> for or is not a register: {}", a_val);
-            // Skipping for now. IS IT THE RIGHT THING TO DO?
-            iter.next();
-            iter.next();
-            return noop::Noop::inst::<OPCODE>(iter);
-        }
-        let a = RegNb::from(a_val);
-        let b = IntReg::new(*iter.next().unwrap());
-        let c = IntReg::new(*iter.next().unwrap());
+    pub fn inst_or<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = RegNb::from(storage.mem.read(address + 1));
+        let b = IntReg::new(storage.mem.read(address + 2));
+        let c = IntReg::new(storage.mem.read(address + 3));
         Box::new(Self::or(a, b, c))
     }
 
@@ -158,7 +147,7 @@ impl Instruction for BinaryOp {
             self.a,
             (self.binary_fn)(st.regs.get_ir(self.b), st.regs.get_ir(self.c)),
         );
-        *ir += 1;
+        *ir += 1 + Self::ARGS_COUNT;
     }
 }
 
@@ -202,7 +191,7 @@ mod test {
         let mut ir = 100;
         ins.exec(&mut ir, &mut storage, &mut terminal);
         assert_eq!(storage.regs.get(RegNb::new(3)), 77);
-        assert_eq!(ir, 101);
+        assert_eq!(ir, 104);
     }
 
     #[test]
@@ -218,7 +207,7 @@ mod test {
         let mut ir = 100;
         ins.exec(&mut ir, &mut storage, &mut terminal);
         assert_eq!(storage.regs.get(RegNb::new(3)), 4200);
-        assert_eq!(ir, 101);
+        assert_eq!(ir, 104);
     }
 
     #[test]
@@ -234,7 +223,7 @@ mod test {
         let mut ir = 100;
         ins.exec(&mut ir, &mut storage, &mut terminal);
         assert_eq!(storage.regs.get(RegNb::new(3)), 1);
-        assert_eq!(ir, 101);
+        assert_eq!(ir, 104);
     }
 
     #[test]
@@ -245,6 +234,6 @@ mod test {
         let mut ir = 100;
         ins.exec(&mut ir, &mut storage, &mut terminal);
         assert_eq!(storage.regs.get(RegNb::new(3)), 1);
-        assert_eq!(ir, 101);
+        assert_eq!(ir, 104);
     }
 }

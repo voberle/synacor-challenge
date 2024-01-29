@@ -1,5 +1,4 @@
 use std::fmt;
-use std::slice::Iter;
 
 use crate::instructions::Instruction;
 use crate::intreg::IntReg;
@@ -13,13 +12,16 @@ pub struct Jmp {
 }
 
 impl Jmp {
+    const ARGS_COUNT: u16 = 1;
+
     fn new(a: IntReg) -> Self {
         Self { a }
     }
 
-    pub fn inst<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let v = *iter.next().unwrap();
-        Box::new(Self::new(IntReg::new(v)))
+    pub fn inst<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = IntReg::new(storage.mem.read(address + 1));
+        Box::new(Self::new(a))
     }
 }
 

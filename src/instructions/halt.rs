@@ -1,5 +1,4 @@
 use std::fmt;
-use std::slice::Iter;
 
 use crate::instructions::Instruction;
 use crate::storage::Storage;
@@ -10,11 +9,14 @@ use crate::terminal::Terminal;
 pub struct Halt {}
 
 impl Halt {
+    const ARGS_COUNT: u16 = 0;
+
     fn new() -> Self {
         Self {}
     }
 
-    pub fn inst<const OPCODE: u8>(_iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+    pub fn inst<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
         Box::new(Self::new())
     }
 }

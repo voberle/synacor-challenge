@@ -2,6 +2,7 @@ mod binary_op;
 mod call;
 mod cmp_op;
 mod halt;
+mod input;
 mod jmp;
 mod jump_if;
 mod mem_access;
@@ -12,21 +13,17 @@ mod set;
 mod stack;
 mod unary_op;
 
-use std::{fmt::Display, slice::Iter};
+use std::fmt::Display;
 
 use crate::{storage::Storage, terminal::Terminal};
 
 pub trait Instruction: Display {
     fn name(&self) -> &'static str;
+    
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal);
 }
 
-fn unimplemented_1<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-    iter.next();
-    noop::Noop::inst::<OPCODE>(iter)
-}
-
-type InstanceFn = fn(&mut Iter<'_, u16>) -> Box<dyn Instruction>;
+type InstanceFn = fn(&Storage, u16) -> Box<dyn Instruction>;
 
 const BUILDERS: [InstanceFn; 22] = [
     halt::Halt::inst::<0>,
@@ -49,24 +46,13 @@ const BUILDERS: [InstanceFn; 22] = [
     call::Call::inst::<17>,
     ret::Ret::inst::<18>,
     out::Out::inst::<19>,
-    unimplemented_1::<20>,
+    input::In::inst::<20>,
     noop::Noop::inst::<21>,
 ];
 
-// Build the list of instructions contained in the binary.
-pub fn build(bin: &[u16]) -> Vec<Box<dyn Instruction>> {
-    let mut instructions: Vec<Box<dyn Instruction>> = Vec::new();
-    let mut iter = bin.iter();
-    while let Some(opcode) = iter.next() {
-        if !(0..=21).contains(opcode) {
-            println!("Unknown opcode: {}", opcode);
-            // println!("Unknown {}, followed by {}, {}", opcode, *iter.next().unwrap(), *iter.next().unwrap());
-            // break;
-            continue;
-        }
-        let ins = BUILDERS[*opcode as usize](&mut iter);
-        println!("{}", ins);
-        instructions.push(ins);
-    }
-    instructions
+pub fn get_instruction(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+    let opcode = storage.mem.read(address);
+    // println!("opcode={opcode}");
+    assert!((0..=21).contains(&opcode));
+    BUILDERS[opcode as usize](storage, address)
 }

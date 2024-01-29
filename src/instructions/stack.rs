@@ -1,5 +1,4 @@
 use std::fmt;
-use std::slice::Iter;
 
 use crate::instructions::Instruction;
 use crate::intreg::IntReg;
@@ -17,6 +16,8 @@ pub struct Stack {
 }
 
 impl Stack {
+    const ARGS_COUNT: u16 = 1;
+
     fn new(name: &'static str, pop: bool, a: IntReg) -> Self {
         Self { name, pop, a }
     }
@@ -29,13 +30,15 @@ impl Stack {
         Self::new("pop", true, a)
     }
 
-    pub fn inst_push<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let a = IntReg::new(*iter.next().unwrap());
+    pub fn inst_push<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = IntReg::new(storage.mem.read(address + 1));
         Box::new(Self::push(a))
     }
 
-    pub fn inst_pop<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let a = IntReg::new(*iter.next().unwrap());
+    pub fn inst_pop<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = IntReg::new(storage.mem.read(address + 1));
         Box::new(Self::pop(a))
     }
 }
@@ -52,7 +55,7 @@ impl Instruction for Stack {
         } else {
             st.stack.push(st.regs.get_ir(self.a));
         }
-        *ir += 1;
+        *ir += 1 + Self::ARGS_COUNT;
     }
 }
 
@@ -80,11 +83,11 @@ mod test {
         let mut ir = 100;
         ins1.exec(&mut ir, &mut storage, &mut terminal);
         assert_eq!(*storage.stack.first().unwrap(), 444);
-        assert_eq!(ir, 101);
+        assert_eq!(ir, 102);
 
         let ins2 = Stack::pop(IntReg::Register(RegNb::new(3)));
         ins2.exec(&mut ir, &mut storage, &mut terminal);
         assert_eq!(storage.regs.get(RegNb::new(3)), 444);
-        assert_eq!(ir, 102);
+        assert_eq!(ir, 104);
     }
 }

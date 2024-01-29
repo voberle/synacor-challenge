@@ -1,5 +1,4 @@
 use std::fmt;
-use std::slice::Iter;
 
 use crate::instructions::Instruction;
 use crate::intreg::IntReg;
@@ -13,13 +12,16 @@ pub struct Call {
 }
 
 impl Call {
+    const ARGS_COUNT: u16 = 1;
+
     fn new(a: IntReg) -> Self {
         Self { a }
     }
 
-    pub fn inst<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-        let v = *iter.next().unwrap();
-        Box::new(Self::new(IntReg::new(v)))
+    pub fn inst<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
+        let a = IntReg::new(storage.mem.read(address + 1));
+        Box::new(Self::new(a))
     }
 }
 
@@ -29,7 +31,7 @@ impl Instruction for Call {
     }
 
     fn exec(&self, ir: &mut u16, st: &mut Storage, _term: &mut Terminal) {
-        st.stack.push(*ir + 1);
+        st.stack.push(*ir + 1 + Self::ARGS_COUNT);
         *ir = st.regs.get_ir(self.a);
     }
 }
@@ -55,7 +57,7 @@ mod test {
         let mut storage = Storage::new();
         let mut ir = 100;
         ins.exec(&mut ir, &mut storage, &mut Terminal::new(false));
-        assert_eq!(*storage.stack.first().unwrap(), 101);
+        assert_eq!(*storage.stack.first().unwrap(), 102);
         assert_eq!(ir, 37);
     }
 }

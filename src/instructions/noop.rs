@@ -1,6 +1,4 @@
 use std::fmt;
-use std::slice::Iter;
-
 use crate::instructions::Instruction;
 use crate::storage::Storage;
 use crate::terminal::Terminal;
@@ -9,15 +7,18 @@ use crate::terminal::Terminal;
 // no operation
 pub struct Noop {
     // Used to save the opcode when Noop is used to replaced an unimplemented instruction.
-    opcode: u8,
+    opcode: u16,
 }
 
 impl Noop {
-    fn new<const OPCODE: u8>() -> Self {
+    const ARGS_COUNT: u16 = 0;
+
+    fn new<const OPCODE: u16>() -> Self {
         Self { opcode: OPCODE }
     }
 
-    pub fn inst<const OPCODE: u8>(_iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+    pub fn inst<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
+        assert_eq!(storage.mem.read(address), OPCODE);
         Box::new(Self::new::<OPCODE>())
     }
 }
@@ -28,7 +29,7 @@ impl Instruction for Noop {
     }
 
     fn exec(&self, ir: &mut u16, _st: &mut Storage, _term: &mut Terminal) {
-        *ir += 1;
+        *ir += 1 + Self::ARGS_COUNT;
     }
 }
 
