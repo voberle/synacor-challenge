@@ -1,4 +1,5 @@
 mod halt;
+mod jmp;
 mod noop;
 mod out;
 
@@ -42,7 +43,7 @@ const BUILDERS: [InstanceFn; 22] = [
     unimplemented_1::<3>,
     unimplemented_3::<4>,
     unimplemented_3::<5>,
-    unimplemented_1::<6>,
+    jmp::Jmp::inst::<6>,
     unimplemented_2::<7>,
     unimplemented_2::<8>,
     unimplemented_3::<9>,
