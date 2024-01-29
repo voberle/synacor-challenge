@@ -1,5 +1,5 @@
 mod binary_op;
-mod eq;
+mod cmp_op;
 mod halt;
 mod jmp;
 mod jump_if;
@@ -45,16 +45,16 @@ const BUILDERS: [InstanceFn; 22] = [
     unimplemented_2::<1>,
     unimplemented_1::<2>,
     unimplemented_1::<3>,
-    eq::Eq::inst::<4>,
-    unimplemented_3::<5>,
+    cmp_op::CmpOp::inst_eq::<4>,
+    cmp_op::CmpOp::inst_gt::<5>,
     jmp::Jmp::inst::<6>,
     jump_if::JumpIf::inst_jt::<7>,
     jump_if::JumpIf::inst_jf::<8>,
     binary_op::BinaryOp::inst_add::<9>,
     binary_op::BinaryOp::inst_mult::<10>,
     binary_op::BinaryOp::inst_mod::<11>,
-    unimplemented_3::<12>,
-    unimplemented_3::<13>,
+    binary_op::BinaryOp::inst_and::<12>,
+    binary_op::BinaryOp::inst_or::<13>,
     unimplemented_2::<14>,
     mem_access::MemAccess::inst_rmem::<15>,
     mem_access::MemAccess::inst_wmem::<16>,

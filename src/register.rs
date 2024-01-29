@@ -73,17 +73,6 @@ impl Registers {
         }
     }
 
-    pub fn cmp_op(&mut self, a: RegNb, b: IntReg, c: IntReg, cmp_fn: fn(u16, u16) -> bool) {
-        self.set(
-            a,
-            if cmp_fn(self.get_ir(b), self.get_ir(c)) {
-                1
-            } else {
-                0
-            },
-        );
-    }
-
     pub fn unary_op(&mut self, a: IntReg, b: IntReg, unary_fn: fn(u16) -> u16) {
         self.set_ir(a, unary_fn(self.get_ir(b)));
     }

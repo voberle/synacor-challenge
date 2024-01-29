@@ -14,6 +14,10 @@ use crate::terminal::Terminal;
 //  store into <a> the product of <b> and <c> (modulo 32768)
 // mod: 11 a b c
 //   store into <a> the remainder of <b> divided by <c>
+// and: 12 a b c
+//   stores into <a> the bitwise and of <b> and <c>
+// or: 13 a b c
+//   stores into <a> the bitwise or of <b> and <c>
 pub struct BinaryOp {
     name: &'static str,
     binary_fn: fn(u16, u16) -> u16,
@@ -32,6 +36,14 @@ fn mult(x: u16, y: u16) -> u16 {
 
 fn modulo(x: u16, y: u16) -> u16 {
     x % y
+}
+
+fn and(x: u16, y: u16) -> u16 {
+    x & y
+}
+
+fn or(x: u16, y: u16) -> u16 {
+    x | y
 }
 
 impl BinaryOp {
@@ -61,6 +73,14 @@ impl BinaryOp {
 
     fn modulo(a: RegNb, b: IntReg, c: IntReg) -> Self {
         Self::new("mod", modulo, a, b, c)
+    }
+
+    fn and(a: RegNb, b: IntReg, c: IntReg) -> Self {
+        Self::new("and", and, a, b, c)
+    }
+
+    fn or(a: RegNb, b: IntReg, c: IntReg) -> Self {
+        Self::new("or", or, a, b, c)
     }
 
     pub fn inst_add<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
@@ -94,11 +114,35 @@ impl BinaryOp {
         Box::new(Self::modulo(a, b, c))
     }
 
+    pub fn inst_and<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+        let a = RegNb::from(*iter.next().unwrap());
+        let b = IntReg::new(*iter.next().unwrap());
+        let c = IntReg::new(*iter.next().unwrap());
+        Box::new(Self::and(a, b, c))
+    }
+
+    pub fn inst_or<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
+        let a_val = *iter.next().unwrap();
+        if a_val < 32768 {
+            eprintln!("Warning: <a> for or is not a register: {}", a_val);
+            // Skipping for now. IS IT THE RIGHT THING TO DO?
+            iter.next();
+            iter.next();
+            return noop::Noop::inst::<OPCODE>(iter);
+        }
+        let a = RegNb::from(a_val);
+        let b = IntReg::new(*iter.next().unwrap());
+        let c = IntReg::new(*iter.next().unwrap());
+        Box::new(Self::or(a, b, c))
+    }
+
     fn sign(&self) -> &'static str {
         match self.name {
             "add" => "+",
             "mult" => "*",
             "mod" => "%",
+            "and" => "&",
+            "or" => "|",
             _ => panic!("Invalid name"),
         }
     }
@@ -187,6 +231,21 @@ mod test {
         let mut terminal = Terminal::new(false);
         let mut storage = Storage::new();
         storage.regs.set(RegNb::new(4), 3);
+        let mut ir = 100;
+        ins.exec(&mut ir, &mut storage, &mut terminal);
+        assert_eq!(storage.regs.get(RegNb::new(3)), 1);
+        assert_eq!(ir, 101);
+    }
+
+    #[test]
+    fn test_exec_and() {
+        let ins = BinaryOp::and(
+            RegNb::new(3),
+            IntReg::Value(3),
+            IntReg::Value(5),
+        );
+        let mut terminal = Terminal::new(false);
+        let mut storage = Storage::new();
         let mut ir = 100;
         ins.exec(&mut ir, &mut storage, &mut terminal);
         assert_eq!(storage.regs.get(RegNb::new(3)), 1);
