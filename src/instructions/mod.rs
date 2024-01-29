@@ -1,6 +1,7 @@
 mod eq;
 mod halt;
 mod jmp;
+mod jump_if;
 mod noop;
 mod out;
 
@@ -45,8 +46,8 @@ const BUILDERS: [InstanceFn; 22] = [
     eq::Eq::inst::<4>,
     unimplemented_3::<5>,
     jmp::Jmp::inst::<6>,
-    unimplemented_2::<7>,
-    unimplemented_2::<8>,
+    jump_if::JumpIf::inst_jt::<7>,
+    jump_if::JumpIf::inst_jf::<8>,
     unimplemented_3::<9>,
     unimplemented_3::<10>,
     unimplemented_3::<11>,

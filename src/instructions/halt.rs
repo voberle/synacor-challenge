@@ -25,6 +25,7 @@ impl Instruction for Halt {
     }
 
     fn exec(&self, _ir: &mut u16, _st: &mut Storage, _term: &mut Terminal) {
+        println!("Halting");
         std::process::exit(0);
     }
 }
