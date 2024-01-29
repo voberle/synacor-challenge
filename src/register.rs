@@ -47,12 +47,12 @@ impl Registers {
         Self { regs: [0; 8] }
     }
 
-    fn get(&self, i: u16) -> u16 {
-        self.regs[i as usize]
+    pub fn get(&self, i: RegNb) -> u16 {
+        self.regs[*i]
     }
 
-    fn set(&mut self, i: u16, val: u16) {
-        self.regs[i as usize] = val;
+    pub fn set(&mut self, i: RegNb, val: u16) {
+        self.regs[*i] = val;
     }
 
     pub fn get_ir(&self, x: IntReg) -> u16 {
