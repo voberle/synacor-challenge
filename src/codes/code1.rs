@@ -9,7 +9,7 @@ use crate::terminal::Terminal;
 fn code1(instructions: &[Box<dyn Instruction>]) -> String {
     let mut ir = 0;
     let mut storage = Storage::new();
-    let mut term = Terminal::new();
+    let mut term = Terminal::new(false);
     instructions
         .iter()
         .take_while(|ins| ins.name() != "halt")
