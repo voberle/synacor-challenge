@@ -239,11 +239,7 @@ mod test {
 
     #[test]
     fn test_exec_and() {
-        let ins = BinaryOp::and(
-            RegNb::new(3),
-            IntReg::Value(3),
-            IntReg::Value(5),
-        );
+        let ins = BinaryOp::and(RegNb::new(3), IntReg::Value(3), IntReg::Value(5));
         let mut terminal = Terminal::new(false);
         let mut storage = Storage::new();
         let mut ir = 100;

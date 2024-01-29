@@ -6,6 +6,8 @@ mod jump_if;
 mod mem_access;
 mod noop;
 mod out;
+mod set;
+mod stack;
 
 use std::{fmt::Display, slice::Iter};
 
@@ -31,20 +33,13 @@ fn unimplemented_2<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instru
     noop::Noop::inst::<OPCODE>(iter)
 }
 
-fn unimplemented_3<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-    iter.next();
-    iter.next();
-    iter.next();
-    noop::Noop::inst::<OPCODE>(iter)
-}
-
 type InstanceFn = fn(&mut Iter<'_, u16>) -> Box<dyn Instruction>;
 
 const BUILDERS: [InstanceFn; 22] = [
     halt::Halt::inst::<0>,
-    unimplemented_2::<1>,
-    unimplemented_1::<2>,
-    unimplemented_1::<3>,
+    set::Set::inst::<1>,
+    stack::Stack::inst_push::<2>,
+    stack::Stack::inst_pop::<3>,
     cmp_op::CmpOp::inst_eq::<4>,
     cmp_op::CmpOp::inst_gt::<5>,
     jmp::Jmp::inst::<6>,

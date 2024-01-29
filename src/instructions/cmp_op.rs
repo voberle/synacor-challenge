@@ -31,8 +31,17 @@ impl CmpOp {
     fn new(
         name: &'static str,
         cmp_fn: fn(u16, u16) -> bool,
-        a: RegNb, b: IntReg, c: IntReg) -> Self {
-        Self { name, cmp_fn, a, b, c }
+        a: RegNb,
+        b: IntReg,
+        c: IntReg,
+    ) -> Self {
+        Self {
+            name,
+            cmp_fn,
+            a,
+            b,
+            c,
+        }
     }
 
     fn eq(a: RegNb, b: IntReg, c: IntReg) -> Self {
