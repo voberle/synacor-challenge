@@ -72,10 +72,6 @@ impl Registers {
             }
         }
     }
-
-    pub fn unary_op(&mut self, a: IntReg, b: IntReg, unary_fn: fn(u16) -> u16) {
-        self.set_ir(a, unary_fn(self.get_ir(b)));
-    }
 }
 
 impl fmt::Display for Registers {

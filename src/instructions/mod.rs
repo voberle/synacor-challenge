@@ -1,4 +1,5 @@
 mod binary_op;
+mod call;
 mod cmp_op;
 mod halt;
 mod jmp;
@@ -6,8 +7,10 @@ mod jump_if;
 mod mem_access;
 mod noop;
 mod out;
+mod ret;
 mod set;
 mod stack;
+mod unary_op;
 
 use std::{fmt::Display, slice::Iter};
 
@@ -18,17 +21,7 @@ pub trait Instruction: Display {
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal);
 }
 
-fn unimplemented<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-    noop::Noop::inst::<OPCODE>(iter)
-}
-
 fn unimplemented_1<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-    iter.next();
-    noop::Noop::inst::<OPCODE>(iter)
-}
-
-fn unimplemented_2<const OPCODE: u8>(iter: &mut Iter<'_, u16>) -> Box<dyn Instruction> {
-    iter.next();
     iter.next();
     noop::Noop::inst::<OPCODE>(iter)
 }
@@ -50,11 +43,11 @@ const BUILDERS: [InstanceFn; 22] = [
     binary_op::BinaryOp::inst_mod::<11>,
     binary_op::BinaryOp::inst_and::<12>,
     binary_op::BinaryOp::inst_or::<13>,
-    unimplemented_2::<14>,
+    unary_op::Not::inst::<14>,
     mem_access::MemAccess::inst_rmem::<15>,
     mem_access::MemAccess::inst_wmem::<16>,
-    unimplemented_1::<17>,
-    unimplemented::<18>,
+    call::Call::inst::<17>,
+    ret::Ret::inst::<18>,
     out::Out::inst::<19>,
     unimplemented_1::<20>,
     noop::Noop::inst::<21>,
