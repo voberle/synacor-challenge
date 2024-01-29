@@ -1,7 +1,8 @@
 #![cfg(test)]
 
+use crate::binary::load_bin;
 use crate::codes::codes_check::verify_code;
-use crate::instruction::{self, load_bin, Instruction, IntReg};
+use crate::instruction::{self, Instruction, IntReg};
 
 fn code1(instructions: &[Instruction]) -> String {
     let welcome_msg: String = instructions
