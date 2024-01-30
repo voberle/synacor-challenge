@@ -11,19 +11,19 @@ fn code() -> String {
     let mut terminal = Terminal::new(false);
     loop {
         let ins = get_instruction(&storage, ir);
-        if ins.name() != "out" && ins.name() != "noop" {
+        if ins.name() == "in" {
             break;
         }
         ins.exec(&mut ir, &mut storage, &mut terminal);
     }
 
     let msg: String = terminal.flush_out();
-    // println!("{}", msg);
-    let welcome_re = regex::Regex::new(r"into the challenge website: (\w+)").unwrap();
+    println!("{}", msg);
+    let welcome_re = regex::Regex::new(r"self-test completion code is: (\w+)").unwrap();
     welcome_re.captures(&msg).unwrap()[1].to_string()
 }
 
 #[test]
 fn test_code() {
-    assert!(verify_code(1, &code()));
+    assert!(verify_code(2, &code()));
 }
