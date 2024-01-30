@@ -9,7 +9,7 @@ use crate::terminal::Terminal;
 pub struct Halt {}
 
 impl Halt {
-    const ARGS_COUNT: u16 = 0;
+    const _ARGS_COUNT: u16 = 0;
 
     fn new() -> Self {
         Self {}

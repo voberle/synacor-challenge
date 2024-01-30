@@ -12,7 +12,7 @@ pub struct Jmp {
 }
 
 impl Jmp {
-    const ARGS_COUNT: u16 = 1;
+    const _ARGS_COUNT: u16 = 1;
 
     fn new(a: IntReg) -> Self {
         Self { a }

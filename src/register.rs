@@ -47,6 +47,7 @@ impl Registers {
         Self { regs: [0; 8] }
     }
 
+    #[cfg(test)]
     pub fn get(&self, i: RegNb) -> u16 {
         self.regs[*i]
     }
@@ -59,17 +60,6 @@ impl Registers {
         match x {
             IntReg::Value(val) => val,
             IntReg::Register(r) => self.regs[*r],
-        }
-    }
-
-    pub fn set_ir(&mut self, x: IntReg, val: u16) {
-        match x {
-            IntReg::Register(r) => {
-                self.regs[*r] = val;
-            }
-            IntReg::Value(_) => {
-                // Ignore, but weird..
-            }
         }
     }
 }

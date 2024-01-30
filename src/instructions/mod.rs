@@ -5,12 +5,14 @@ mod halt;
 mod input;
 mod jmp;
 mod jump_if;
-mod mem_access;
+mod mem_read;
+mod mem_write;
 mod noop;
 mod out;
 mod ret;
 mod set;
-mod stack;
+mod stack_pop;
+mod stack_push;
 mod unary_op;
 
 use std::fmt::Display;
@@ -28,8 +30,8 @@ type InstanceFn = fn(&Storage, u16) -> Box<dyn Instruction>;
 const BUILDERS: [InstanceFn; 22] = [
     halt::Halt::inst::<0>,
     set::Set::inst::<1>,
-    stack::Stack::inst_push::<2>,
-    stack::Stack::inst_pop::<3>,
+    stack_push::Push::inst::<2>,
+    stack_pop::Pop::inst::<3>,
     cmp_op::CmpOp::inst_eq::<4>,
     cmp_op::CmpOp::inst_gt::<5>,
     jmp::Jmp::inst::<6>,
@@ -41,8 +43,8 @@ const BUILDERS: [InstanceFn; 22] = [
     binary_op::BinaryOp::inst_and::<12>,
     binary_op::BinaryOp::inst_or::<13>,
     unary_op::Not::inst::<14>,
-    mem_access::MemAccess::inst_rmem::<15>,
-    mem_access::MemAccess::inst_wmem::<16>,
+    mem_read::RMem::inst::<15>,
+    mem_write::WMem::inst::<16>,
     call::Call::inst::<17>,
     ret::Ret::inst::<18>,
     out::Out::inst::<19>,

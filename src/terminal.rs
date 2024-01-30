@@ -24,6 +24,7 @@ impl Terminal {
         self.output.push(c);
     }
 
+    #[cfg(test)]
     pub fn flush_out(&mut self) -> String {
         let out = self.output.clone();
         self.output.clear();
@@ -34,7 +35,6 @@ impl Terminal {
         if self.input.is_empty() {
             io::stdin()
                 .read_line(&mut self.input)
-                .ok()
                 .expect("Failed to read input");
         }
         self.input.remove(0)
