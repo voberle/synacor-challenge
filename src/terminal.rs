@@ -1,7 +1,11 @@
+use std::io;
+
 pub struct Terminal {
     output: String,
     // Print each character to real terminal as they come
     print: bool,
+
+    input: String,
 }
 
 impl Terminal {
@@ -9,6 +13,7 @@ impl Terminal {
         Self {
             output: String::new(),
             print,
+            input: String::new(),
         }
     }
 
@@ -23,5 +28,15 @@ impl Terminal {
         let out = self.output.clone();
         self.output.clear();
         out
+    }
+
+    pub fn read(&mut self) -> char {
+        if self.input.is_empty() {
+            io::stdin()
+                .read_line(&mut self.input)
+                .ok()
+                .expect("Failed to read input");
+        }
+        self.input.remove(0)
     }
 }
