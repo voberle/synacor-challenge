@@ -42,10 +42,6 @@ impl Instruction for In {
 
 impl fmt::Display for In {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-                write!(
-                    f,
-                    "In: {}",
-                    self.a
-                )
+        write!(f, "In: {}", self.a)
     }
 }

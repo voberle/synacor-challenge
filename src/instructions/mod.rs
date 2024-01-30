@@ -19,7 +19,7 @@ use crate::{storage::Storage, terminal::Terminal};
 
 pub trait Instruction: Display {
     fn name(&self) -> &'static str;
-    
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal);
 }
 

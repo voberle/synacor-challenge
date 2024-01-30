@@ -13,6 +13,10 @@ pub struct Not {
     b: IntReg,
 }
 
+fn not(x: u16) -> u16 {
+    !x & 0x07FFF
+}
+
 impl Not {
     const ARGS_COUNT: u16 = 2;
 
@@ -34,7 +38,7 @@ impl Instruction for Not {
     }
 
     fn exec(&self, ir: &mut u16, st: &mut Storage, _term: &mut Terminal) {
-        st.regs.set(self.a, !st.regs.get_ir(self.b));
+        st.regs.set(self.a, not(st.regs.get_ir(self.b)));
         *ir += 1 + Self::ARGS_COUNT;
     }
 }
@@ -51,6 +55,13 @@ mod test {
     use crate::register::RegNb;
 
     #[test]
+    fn test_not() {
+        assert_eq!(not(0), 32767);
+        assert_eq!(not(32767), 0);
+        assert_eq!(not(4), 32763);
+    }
+
+    #[test]
     fn test_exec() {
         let ins = Not::new(RegNb::new(3), IntReg::Register(RegNb::new(2)));
         let mut terminal = Terminal::new(false);
@@ -58,7 +69,7 @@ mod test {
         storage.regs.set(RegNb::new(2), 4);
         let mut ir = 100;
         ins.exec(&mut ir, &mut storage, &mut terminal);
-        assert_eq!(storage.regs.get(RegNb::new(3)), 65531);
+        assert_eq!(storage.regs.get(RegNb::new(3)), 32763);
         assert_eq!(ir, 103);
     }
 }

@@ -1,7 +1,7 @@
-use std::fmt;
 use crate::instructions::Instruction;
 use crate::storage::Storage;
 use crate::terminal::Terminal;
+use std::fmt;
 
 // noop: 21
 // no operation

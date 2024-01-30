@@ -9,9 +9,7 @@ pub struct Memory {
 impl Memory {
     pub fn new() -> Self {
         let bin = load_bin();
-        Self {
-            mem: bin,
-        }
+        Self { mem: bin }
     }
 
     pub fn read(&self, a: u16) -> u16 {
