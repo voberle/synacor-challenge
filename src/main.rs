@@ -10,7 +10,7 @@ use instructions::get_instruction;
 use storage::Storage;
 use terminal::Terminal;
 
-const DEBUG: bool = false;
+const DEBUG: bool = true;
 
 fn main() {
     let mut storage = Storage::new();
@@ -18,10 +18,14 @@ fn main() {
 
     let mut ir: u16 = 0;
 
+    let mut i = 0;
     loop {
-        // println!("\t{}", storage.regs);
-        // println!("[{}] {}", ir, ins);
         let ins = get_instruction(&storage, ir);
+        if DEBUG {
+            // println!("\t{}", storage.regs);
+            println!("{i}: [{}] {}", ir, ins);
+            i += 1;
+        }
         ins.exec(&mut ir, &mut storage, &mut terminal);
     }
 }

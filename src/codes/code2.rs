@@ -18,7 +18,6 @@ fn code() -> String {
     }
 
     let msg: String = terminal.flush_out();
-    println!("{}", msg);
     let welcome_re = regex::Regex::new(r"self-test completion code is: (\w+)").unwrap();
     welcome_re.captures(&msg).unwrap()[1].to_string()
 }

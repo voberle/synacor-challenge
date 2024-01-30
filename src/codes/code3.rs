@@ -9,20 +9,23 @@ fn code() -> String {
     let mut ir = 0;
     let mut storage = Storage::new();
     let mut terminal = Terminal::new(false);
-    loop {
+    terminal.set_input(
+        r"take tablet
+use tablet
+",
+    );
+    for _ in 0..703217 {
         let ins = get_instruction(&storage, ir);
-        if ins.name() != "out" && ins.name() != "noop" {
-            break;
-        }
         ins.exec(&mut ir, &mut storage, &mut terminal);
     }
 
     let msg: String = terminal.flush_out();
-    let welcome_re = regex::Regex::new(r"into the challenge website: (\w+)").unwrap();
+    let welcome_re =
+        regex::Regex::new(r#"You find yourself writing \"(\w+)\" on the tablet"#).unwrap();
     welcome_re.captures(&msg).unwrap()[1].to_string()
 }
 
 #[test]
 fn test_code() {
-    assert!(verify_code(1, &code()));
+    assert!(verify_code(3, &code()));
 }

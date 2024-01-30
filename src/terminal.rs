@@ -39,4 +39,9 @@ impl Terminal {
         }
         self.input.remove(0)
     }
+
+    #[cfg(test)]
+    pub fn set_input(&mut self, input: &str) {
+        self.input = input.to_string();
+    }
 }
