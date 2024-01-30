@@ -1,4 +1,3 @@
-mod binary;
 mod codes;
 mod instructions;
 mod intreg;
@@ -10,7 +9,7 @@ use instructions::get_instruction;
 use storage::Storage;
 use terminal::Terminal;
 
-const DEBUG: bool = true;
+const DEBUG: bool = false;
 
 fn main() {
     let mut storage = Storage::new();

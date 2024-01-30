@@ -47,11 +47,6 @@ impl Registers {
         Self { regs: [0; 8] }
     }
 
-    #[cfg(test)]
-    pub fn get(&self, i: RegNb) -> u16 {
-        self.regs[*i]
-    }
-
     pub fn set(&mut self, i: RegNb, val: u16) {
         self.regs[*i] = val;
     }
@@ -61,6 +56,11 @@ impl Registers {
             IntReg::Value(val) => val,
             IntReg::Register(r) => self.regs[*r],
         }
+    }
+
+    #[cfg(test)]
+    pub fn get(&self, i: RegNb) -> u16 {
+        self.regs[*i]
     }
 }
 

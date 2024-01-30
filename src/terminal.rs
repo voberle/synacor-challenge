@@ -1,5 +1,6 @@
 use std::io;
 
+// A way to access the terminal from the code, which can also be used in tests.
 pub struct Terminal {
     output: String,
     // Print each character to real terminal as they come
@@ -9,6 +10,7 @@ pub struct Terminal {
 }
 
 impl Terminal {
+    // In real app, set print to true to have output characters go to the real terminal.
     pub fn new(print: bool) -> Self {
         Self {
             output: String::new(),
@@ -17,6 +19,7 @@ impl Terminal {
         }
     }
 
+    // Write a char to terminal.
     pub fn write(&mut self, c: char) {
         if self.print {
             print!("{}", c);
@@ -24,13 +27,7 @@ impl Terminal {
         self.output.push(c);
     }
 
-    #[cfg(test)]
-    pub fn flush_out(&mut self) -> String {
-        let out = self.output.clone();
-        self.output.clear();
-        out
-    }
-
+    // Read a char from terminal
     pub fn read(&mut self) -> char {
         if self.input.is_empty() {
             io::stdin()
@@ -40,6 +37,15 @@ impl Terminal {
         self.input.remove(0)
     }
 
+    // For tests: Get all that went to terminal, and clears it.
+    #[cfg(test)]
+    pub fn flush_out(&mut self) -> String {
+        let out = self.output.clone();
+        self.output.clear();
+        out
+    }
+
+    // For tests: Set what should be read from terminal.
     #[cfg(test)]
     pub fn set_input(&mut self, input: &str) {
         self.input = input.to_string();

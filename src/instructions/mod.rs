@@ -25,6 +25,7 @@ pub trait Instruction: Display {
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal);
 }
 
+// TODO Make this nicer by passing a slice with just the arguments instead.
 type InstanceFn = fn(&Storage, u16) -> Box<dyn Instruction>;
 
 const BUILDERS: [InstanceFn; 22] = [
