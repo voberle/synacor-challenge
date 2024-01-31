@@ -7,15 +7,15 @@ use crate::maze;
 use crate::vm::run;
 
 fn code() -> String {
-    let actions = &maze::maze_commands::COMMANDS[0..=14];
+    let actions = &maze::maze_commands::COMMANDS[0..=50];
 
     let msg: String = run::execute_actions(actions);
-    let re = Regex::new(r"Chiseled on the wall of one of the passageways, you see:[.\n ]+(\w+)")
+    let re = Regex::new(r"You activate the teleporter!  As you spiral through time and space, you think you see a pattern in the stars\.\.\.[.\n ]+(\w+)")
         .unwrap();
     re.captures(&msg).unwrap()[1].to_string()
 }
 
 #[test]
 fn test_code() {
-    assert!(verify_code(4, &code()));
+    assert!(verify_code(5, &code()));
 }

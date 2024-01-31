@@ -60,6 +60,7 @@ pub fn execute_program(actions: &[&str], debug: bool) {
 
         if ins.name() == "in" && terminal.is_input_empty() {
             if let Some(action) = get_next_action(&mut saved_actions) {
+                print!("{}", action);
                 terminal.set_input(&action);
             }
         }
