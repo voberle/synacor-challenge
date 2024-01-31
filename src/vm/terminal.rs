@@ -70,6 +70,10 @@ impl Terminal {
         self.interactive_mode
     }
 
+    pub fn set_interactive_mode(&mut self) {
+        self.interactive_mode = true;
+    }
+
     pub fn quit_interactive_mode(&mut self) {
         self.interactive_mode = false;
     }

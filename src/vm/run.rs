@@ -54,6 +54,7 @@ pub fn execute_program(actions: &[&str]) {
     saved_actions.extend(actions.iter().copied());
 
     let mut verbose = false;
+    let mut set_breakpoint: Option<u16> = None;
 
     loop {
         let ins = get_instruction(&storage, ir);
@@ -68,7 +69,15 @@ pub fn execute_program(actions: &[&str]) {
             }
         }
 
-        ins.exec(&mut ir, &mut storage, &mut terminal);
+        if let Some(breakpoint) = set_breakpoint {
+            if breakpoint == ir {
+                terminal.set_interactive_mode();
+                println!("Stopped at breakpoint {}", breakpoint);
+            }
+        }
+        if !terminal.is_interactive_mode() {
+            ins.exec(&mut ir, &mut storage, &mut terminal);
+        }
 
         while terminal.is_interactive_mode() {
             let debugger_actions = interactive_mode(ir, &storage);
@@ -77,6 +86,10 @@ pub fn execute_program(actions: &[&str]) {
             }
             if let Some(is_verbose) = debugger_actions.verbose {
                 verbose = is_verbose;
+            }
+            set_breakpoint = debugger_actions.set_breakpoint;
+            if let Some(true) = debugger_actions.clear_breakpoint {
+                set_breakpoint = None;
             }
             if let Some((reg_nb, val)) = debugger_actions.set_register {
                 storage.regs.set(reg_nb, val);

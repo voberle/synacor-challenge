@@ -9,6 +9,8 @@ use super::storage::Storage;
 pub struct DebuggerActions {
     pub quit: Option<bool>,
     pub verbose: Option<bool>,
+    pub set_breakpoint: Option<u16>,
+    pub clear_breakpoint: Option<bool>,
     pub set_register: Option<(RegNb, u16)>,
     pub set_memory: Option<(u16, u16)>,
 }
@@ -60,6 +62,23 @@ pub fn exec_debug_cmd(s: &str, ir: u16, storage: &Storage) -> DebuggerActions {
                 ..Default::default()
             };
         }
+        "bp" => {
+            if parts.len() < 2 {
+                return DebuggerActions::default();
+            }
+            if let Ok(address) = parts[1].parse::<u16>() {
+                return DebuggerActions {
+                    set_breakpoint: Some(address),
+                    ..Default::default()
+                };
+            }
+        }
+        "clearbp" => {
+            return DebuggerActions {
+                clear_breakpoint: Some(true),
+                ..Default::default()
+            };
+        }
         "setr" => {
             if parts.len() < 3 {
                 return DebuggerActions::default();
@@ -105,6 +124,8 @@ stack       Show stack.
 print a     Prints value at address <a>.
 show a n    Displays <n> instruction at address <a>.
 verbose [on|off] Turns verbose mode on/off.
+bp a        Set breakpoint at address <a>.
+clearbp     Clear breakpoint.
 setr r val  Set register <r> to <val>.
 setm a val  Set memory address <a> to <val>.
 quit        Quit debugger.
