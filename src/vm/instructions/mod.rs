@@ -22,6 +22,7 @@ use crate::vm::terminal::Terminal;
 
 pub trait Instruction: Display {
     fn name(&self) -> &'static str;
+    fn offset(&self) -> u16;
 
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal);
 }

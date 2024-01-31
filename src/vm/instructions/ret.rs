@@ -9,7 +9,7 @@ use crate::vm::terminal::Terminal;
 pub struct Ret {}
 
 impl Ret {
-    const _ARGS_COUNT: u16 = 0;
+    const ARGS_COUNT: u16 = 0;
 
     fn new() -> Self {
         Self {}
@@ -23,6 +23,10 @@ impl Ret {
 impl Instruction for Ret {
     fn name(&self) -> &'static str {
         "ret"
+    }
+
+    fn offset(&self) -> u16 {
+        1 + Self::ARGS_COUNT
     }
 
     fn exec(&self, ir: &mut u16, st: &mut Storage, _term: &mut Terminal) {

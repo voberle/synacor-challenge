@@ -9,7 +9,7 @@ use crate::vm::terminal::Terminal;
 pub struct Halt {}
 
 impl Halt {
-    const _ARGS_COUNT: u16 = 0;
+    const ARGS_COUNT: u16 = 0;
 
     fn new() -> Self {
         Self {}
@@ -23,6 +23,10 @@ impl Halt {
 impl Instruction for Halt {
     fn name(&self) -> &'static str {
         "halt"
+    }
+
+    fn offset(&self) -> u16 {
+        1 + Self::ARGS_COUNT
     }
 
     fn exec(&self, _ir: &mut u16, _st: &mut Storage, _term: &mut Terminal) {

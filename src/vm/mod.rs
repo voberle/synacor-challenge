@@ -1,3 +1,4 @@
+mod debugger;
 mod instructions;
 mod intreg;
 mod register;

@@ -33,6 +33,10 @@ impl Instruction for In {
         "in"
     }
 
+    fn offset(&self) -> u16 {
+        1 + Self::ARGS_COUNT
+    }
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal) {
         if let Some(c) = term.read() {
             st.regs.set(self.a, c as u16);

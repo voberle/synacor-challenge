@@ -29,6 +29,10 @@ impl Instruction for Out {
         "out"
     }
 
+    fn offset(&self) -> u16 {
+        1 + Self::ARGS_COUNT
+    }
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal) {
         term.write(st.regs.get_ir(self.a) as u8 as char);
         *ir += 1 + Self::ARGS_COUNT;

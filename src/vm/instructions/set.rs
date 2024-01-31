@@ -32,6 +32,10 @@ impl Instruction for Set {
         "set"
     }
 
+    fn offset(&self) -> u16 {
+        1 + Self::ARGS_COUNT
+    }
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, _term: &mut Terminal) {
         st.regs.set(self.a, st.regs.get_ir(self.b));
         *ir += 1 + Self::ARGS_COUNT;

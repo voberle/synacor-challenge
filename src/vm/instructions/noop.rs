@@ -25,6 +25,10 @@ impl Instruction for Noop {
         "noop"
     }
 
+    fn offset(&self) -> u16 {
+        1 + Self::ARGS_COUNT
+    }
+
     fn exec(&self, ir: &mut u16, _st: &mut Storage, _term: &mut Terminal) {
         *ir += 1 + Self::ARGS_COUNT;
     }

@@ -12,7 +12,7 @@ pub struct Jmp {
 }
 
 impl Jmp {
-    const _ARGS_COUNT: u16 = 1;
+    const ARGS_COUNT: u16 = 1;
 
     fn new(a: IntReg) -> Self {
         Self { a }
@@ -27,6 +27,10 @@ impl Jmp {
 impl Instruction for Jmp {
     fn name(&self) -> &'static str {
         "jmp"
+    }
+
+    fn offset(&self) -> u16 {
+        1 + Self::ARGS_COUNT
     }
 
     fn exec(&self, ir: &mut u16, st: &mut Storage, _term: &mut Terminal) {

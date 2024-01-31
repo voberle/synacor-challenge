@@ -1,6 +1,7 @@
 use std::collections::VecDeque;
 use std::io::{self, Write};
 
+use crate::vm::debugger;
 use crate::vm::instructions::get_instruction;
 use crate::vm::storage::Storage;
 use crate::vm::terminal::Terminal;
@@ -69,13 +70,14 @@ pub fn execute_program(actions: &[&str], debug: bool) {
         ins.exec(&mut ir, &mut storage, &mut terminal);
 
         while terminal.is_interactive_mode() {
-            if !interactive_mode(ir, &storage) {
+            if interactive_mode(ir, &storage) {
                 terminal.quit_interactive_mode();
             }
         }
     }
 }
 
+// Returns true if mode should be exited.
 fn interactive_mode(ir: u16, storage: &Storage) -> bool {
     print!("> ");
     let _ = io::stdout().flush();
@@ -83,9 +85,6 @@ fn interactive_mode(ir: u16, storage: &Storage) -> bool {
     io::stdin()
         .read_line(&mut buf)
         .expect("Failed to read input");
-    match buf.trim() {
-        "v1" => println!("Next ins: {}", get_instruction(storage, ir)),
-        _ => return false,
-    }
-    true
+
+    debugger::exec_debug_cmd(buf.trim(), ir, storage)
 }

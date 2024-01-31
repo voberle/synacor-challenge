@@ -29,6 +29,10 @@ impl Instruction for Pop {
         "pop"
     }
 
+    fn offset(&self) -> u16 {
+        1 + Self::ARGS_COUNT
+    }
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, _term: &mut Terminal) {
         st.regs.set(self.a, st.stack.pop().expect("Stack is empty"));
         *ir += 1 + Self::ARGS_COUNT;

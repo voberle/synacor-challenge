@@ -29,6 +29,10 @@ impl Instruction for Push {
         "push"
     }
 
+    fn offset(&self) -> u16 {
+        1 + Self::ARGS_COUNT
+    }
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, _term: &mut Terminal) {
         st.stack.push(st.regs.get_ir(self.a));
         *ir += 1 + Self::ARGS_COUNT;

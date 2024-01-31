@@ -54,6 +54,10 @@ impl Instruction for JumpIf {
         self.name
     }
 
+    fn offset(&self) -> u16 {
+        1 + Self::ARGS_COUNT
+    }
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, _term: &mut Terminal) {
         if (self.cond_fn)(st.regs.get_ir(self.a)) {
             *ir = st.regs.get_ir(self.b);
