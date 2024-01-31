@@ -10,8 +10,12 @@ pub struct RegNb {
 }
 
 impl RegNb {
+    pub fn is_valid(value: usize) -> bool {
+        (0..=7).contains(&value)
+    }
+
     pub fn new(value: usize) -> Self {
-        assert!((0..=7).contains(&value));
+        assert!(Self::is_valid(value));
         Self { value }
     }
 }

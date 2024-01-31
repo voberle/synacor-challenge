@@ -8,7 +8,7 @@ use itertools::Itertools;
 
 fn find_right_order() -> Vec<&'static str> {
     // There are 5 coins, each with a specific value.
-    // I found the value by placing them on the wall, then their value is printed (it's not the string length as I first thought).
+    // You get the value by looking at it: "look red coin".
     const COINS: [(&str, usize); 5] = [
         ("red", 2),
         ("corroded", 3),

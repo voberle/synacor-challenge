@@ -49,6 +49,7 @@ mod test {
     fn test_exec() {
         let ins = Ret::new();
         let mut storage = Storage::new();
+        storage.stack.push(300);
         storage.stack.push(478);
         let mut ir = 100;
         ins.exec(&mut ir, &mut storage, &mut Terminal::new(false));

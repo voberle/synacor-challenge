@@ -175,6 +175,9 @@ mod test {
         let b = 16384;
         assert_eq!(a + b, 32768);
         assert_eq!(add(a, b), 0);
+        // Adding 32767 is same as -1
+        assert_eq!(add(10, 32767), 9);
+        assert_eq!(add(45, 32767), 44);
     }
 
     #[test]

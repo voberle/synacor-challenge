@@ -6,6 +6,8 @@ use crate::vm::instructions::get_instruction;
 use crate::vm::storage::Storage;
 use crate::vm::terminal::Terminal;
 
+use super::debugger::DebuggerActions;
+
 fn get_next_action(saved_actions: &mut VecDeque<&str>) -> Option<String> {
     if !saved_actions.is_empty() {
         let next_action = saved_actions.pop_front().unwrap();
@@ -43,21 +45,20 @@ pub fn execute_actions(actions: &[&str]) -> String {
 }
 
 // Runs the program, first executing the actions, then waiting for user input.
-pub fn execute_program(actions: &[&str], debug: bool) {
+pub fn execute_program(actions: &[&str]) {
     let mut storage = Storage::new();
-    let mut terminal = Terminal::new(!debug);
+    let mut terminal = Terminal::new(true);
     let mut ir: u16 = 0;
 
     let mut saved_actions: VecDeque<&str> = VecDeque::new();
     saved_actions.extend(actions.iter().copied());
 
-    let mut i = 0;
+    let mut verbose = false;
+
     loop {
         let ins = get_instruction(&storage, ir);
-        if debug {
-            // println!("\t{}", storage.regs);
-            println!("{i}: [{}] {}", ir, ins);
-            i += 1;
+        if verbose {
+            println!("[{}] {}", ir, ins);
         }
 
         if ins.name() == "in" && terminal.is_input_empty() {
@@ -70,15 +71,26 @@ pub fn execute_program(actions: &[&str], debug: bool) {
         ins.exec(&mut ir, &mut storage, &mut terminal);
 
         while terminal.is_interactive_mode() {
-            if interactive_mode(ir, &storage) {
+            let debugger_actions = interactive_mode(ir, &storage);
+            if let Some(true) = debugger_actions.quit {
                 terminal.quit_interactive_mode();
+            }
+            if let Some(is_verbose) = debugger_actions.verbose {
+                verbose = is_verbose;
+            }
+            if let Some((reg_nb, val)) = debugger_actions.set_register {
+                storage.regs.set(reg_nb, val);
+                println!("Register {} set to {}", reg_nb, val);
+            }
+            if let Some((a, val)) = debugger_actions.set_memory {
+                storage.mem.write(a, val);
+                println!("Memory at {} set to {}", a, val);
             }
         }
     }
 }
 
-// Returns true if mode should be exited.
-fn interactive_mode(ir: u16, storage: &Storage) -> bool {
+fn interactive_mode(ir: u16, storage: &Storage) -> DebuggerActions {
     print!("> ");
     let _ = io::stdout().flush();
     let mut buf = String::new();
