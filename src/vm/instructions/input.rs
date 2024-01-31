@@ -38,6 +38,10 @@ impl Instruction for In {
         1 + Self::ARGS_COUNT
     }
 
+    fn decompile(&self) -> String {
+        format!("{}\t{}\t{}", self.addr, self.name(), self.a)
+    }
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal) {
         if let Some(c) = term.read() {
             st.regs.set(self.a, c as u16);

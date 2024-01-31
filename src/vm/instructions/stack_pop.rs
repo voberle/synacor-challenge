@@ -34,6 +34,10 @@ impl Instruction for Pop {
         1 + Self::ARGS_COUNT
     }
 
+    fn decompile(&self) -> String {
+        format!("{}\t{}\t{}", self.addr, self.name(), self.a)
+    }
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, _term: &mut Terminal) {
         st.regs.set(self.a, st.stack.pop().expect("Stack is empty"));
         *ir += 1 + Self::ARGS_COUNT;
@@ -42,7 +46,7 @@ impl Instruction for Pop {
 
 impl fmt::Display for Pop {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}: Pop from stack to {}", self.name(), self.a,)
+        write!(f, "{}: Pop from stack to {}", self.name(), self.a)
     }
 }
 

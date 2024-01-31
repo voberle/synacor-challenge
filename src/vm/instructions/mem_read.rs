@@ -37,6 +37,10 @@ impl Instruction for RMem {
         1 + Self::ARGS_COUNT
     }
 
+    fn decompile(&self) -> String {
+        format!("{}\t{}\t{}\t{}", self.addr, self.name(), self.a, self.b)
+    }
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, _term: &mut Terminal) {
         st.regs.set(self.a, st.mem.read(st.regs.get_ir(self.b)));
         *ir += 1 + Self::ARGS_COUNT;

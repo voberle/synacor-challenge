@@ -34,6 +34,10 @@ impl Instruction for Call {
         1 + Self::ARGS_COUNT
     }
 
+    fn decompile(&self) -> String {
+        format!("{}\t{}\t{}", self.addr, self.name(), self.a)
+    }
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, _term: &mut Terminal) {
         st.stack.push(*ir + 1 + Self::ARGS_COUNT);
         *ir = st.regs.get_ir(self.a);

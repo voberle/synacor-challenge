@@ -31,6 +31,10 @@ impl Instruction for Noop {
         1 + Self::ARGS_COUNT
     }
 
+    fn decompile(&self) -> String {
+        format!("{}\t{}", self.addr, self.name())
+    }
+
     fn exec(&self, ir: &mut u16, _st: &mut Storage, _term: &mut Terminal) {
         *ir += 1 + Self::ARGS_COUNT;
     }

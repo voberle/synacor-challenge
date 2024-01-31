@@ -19,9 +19,13 @@ pub struct Memory {
 }
 
 impl Memory {
-    fn new() -> Self {
+    pub fn new() -> Self {
         let bin = load_bin();
         Self { mem: bin }
+    }
+
+    pub fn len(&self) -> u16 {
+        self.mem.len() as u16
     }
 
     pub fn read(&self, a: u16) -> u16 {
@@ -34,7 +38,8 @@ impl Memory {
 
     pub fn ins_slice(&self, from: u16) -> &[u16] {
         let f = from as usize;
-        &self.mem[f..f + 4]
+        let t = (self.mem.len() - 1).min(f + 4);
+        &self.mem[f..t]
     }
 }
 

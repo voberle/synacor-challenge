@@ -34,6 +34,10 @@ impl Instruction for Out {
         1 + Self::ARGS_COUNT
     }
 
+    fn decompile(&self) -> String {
+        format!("{}\t{}\t{}", self.addr, self.name(), self.a)
+    }
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal) {
         term.write(st.regs.get_ir(self.a) as u8 as char);
         *ir += 1 + Self::ARGS_COUNT;

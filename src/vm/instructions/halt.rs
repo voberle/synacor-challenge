@@ -31,6 +31,10 @@ impl Instruction for Halt {
         1 + Self::ARGS_COUNT
     }
 
+    fn decompile(&self) -> String {
+        format!("{}\t{}", self.addr, self.name())
+    }
+
     fn exec(&self, _ir: &mut u16, _st: &mut Storage, _term: &mut Terminal) {
         println!("Halting");
         std::process::exit(0);

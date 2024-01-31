@@ -31,6 +31,10 @@ impl Instruction for Ret {
         1 + Self::ARGS_COUNT
     }
 
+    fn decompile(&self) -> String {
+        format!("{}\t{}", self.addr, self.name())
+    }
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, _term: &mut Terminal) {
         let address = st.stack.pop().expect("Stack is empty");
         *ir = address;

@@ -23,13 +23,14 @@ use crate::vm::terminal::Terminal;
 pub trait Instruction: Display {
     fn name(&self) -> &'static str;
     fn offset(&self) -> u16;
+    fn decompile(&self) -> String;
 
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal);
 }
 
 type InstanceFn = fn(u16, &[u16]) -> Box<dyn Instruction>;
 
-const BUILDERS: [InstanceFn; 22] = [
+pub const BUILDERS: [InstanceFn; 22] = [
     halt::Halt::inst,               // 0
     set::Set::inst,                 // 1
     stack_push::Push::inst,         // 2

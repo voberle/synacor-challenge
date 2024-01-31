@@ -34,6 +34,10 @@ impl Instruction for Push {
         1 + Self::ARGS_COUNT
     }
 
+    fn decompile(&self) -> String {
+        format!("{}\t{}\t{}", self.addr, self.name(), self.a)
+    }
+
     fn exec(&self, ir: &mut u16, st: &mut Storage, _term: &mut Terminal) {
         st.stack.push(st.regs.get_ir(self.a));
         *ir += 1 + Self::ARGS_COUNT;
@@ -42,7 +46,7 @@ impl Instruction for Push {
 
 impl fmt::Display for Push {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}: Push {} onto stack", self.name(), self.a,)
+        write!(f, "{}: Push {} onto stack", self.name(), self.a)
     }
 }
 
