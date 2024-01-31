@@ -1,28 +1,16 @@
 #![cfg(test)]
 
+use regex::Regex;
+
 use crate::codes::codes_check::verify_code;
-use crate::vm::instructions::get_instruction;
-use crate::vm::storage::Storage;
-use crate::vm::terminal::Terminal;
+use crate::vm::run;
 
 fn code() -> String {
-    let mut ir = 0;
-    let mut storage = Storage::new();
-    let mut terminal = Terminal::new(false);
-    terminal.set_input(
-        r"take tablet
-use tablet
-",
-    );
-    for _ in 0..703217 {
-        let ins = get_instruction(&storage, ir);
-        ins.exec(&mut ir, &mut storage, &mut terminal);
-    }
+    let actions = ["take tablet", "use tablet"];
 
-    let msg: String = terminal.flush_out();
-    let welcome_re =
-        regex::Regex::new(r#"You find yourself writing \"(\w+)\" on the tablet"#).unwrap();
-    welcome_re.captures(&msg).unwrap()[1].to_string()
+    let msg = run::execute_actions(&actions);
+    let re = Regex::new(r#"You find yourself writing \"(\w+)\" on the tablet"#).unwrap();
+    re.captures(&msg).unwrap()[1].to_string()
 }
 
 #[test]

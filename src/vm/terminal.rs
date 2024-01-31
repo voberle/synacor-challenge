@@ -37,7 +37,7 @@ impl Terminal {
         self.input.remove(0)
     }
 
-    // For tests: Get all that went to terminal, and clears it.
+    // Get all that went to terminal, and clears it.
     #[cfg(test)]
     pub fn flush_out(&mut self) -> String {
         let out = self.output.clone();

@@ -1,5 +1,7 @@
 #![cfg(test)]
 
+use regex::Regex;
+
 use crate::codes::codes_check::verify_code;
 use crate::vm::instructions::get_instruction;
 use crate::vm::storage::Storage;
@@ -18,8 +20,8 @@ fn code() -> String {
     }
 
     let msg: String = terminal.flush_out();
-    let welcome_re = regex::Regex::new(r"into the challenge website: (\w+)").unwrap();
-    welcome_re.captures(&msg).unwrap()[1].to_string()
+    let re = Regex::new(r"into the challenge website: (\w+)").unwrap();
+    re.captures(&msg).unwrap()[1].to_string()
 }
 
 #[test]
