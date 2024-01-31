@@ -1,5 +1,5 @@
 // Commands to run for going through the maze.
-pub const COMMANDS: [&'static str; 51] = [
+pub const COMMANDS: [&str; 51] = [
     "go doorway",
     "go north",
     "go north",
