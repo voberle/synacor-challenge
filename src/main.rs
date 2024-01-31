@@ -1,4 +1,5 @@
 mod codes;
+mod maze;
 mod vm;
 
 use std::collections::VecDeque;
@@ -14,59 +15,7 @@ fn main() {
     let mut terminal = Terminal::new(!DEBUG);
     let mut ir: u16 = 0;
 
-    let mut saved_actions = VecDeque::from(vec![
-        "go doorway",
-        "go north",
-        "go north",
-        "go bridge",
-        "go continue",
-        "go down",
-        "go east",
-        "take empty lantern",
-        "go west",
-        "go west",
-        "go passage",
-        "go ladder",
-        "go west",
-        "go south",
-        "go north", // code
-        "take can",
-        "go west",
-        "go ladder",
-        "go darkness",
-        "use can",
-        "use lantern",
-        "go continue",
-        "go west",
-        "go west",
-        "go west",
-        "go west",
-        "go north",
-        "take red coin",
-        "go north",
-        "go east",
-        "take concave coin",
-        "go down",
-        "take corroded coin",
-        "go up",
-        "go west",
-        "go west",
-        "take blue coin",
-        "go up",
-        "take shiny coin",
-        "go down",
-        "go east",
-        "use blue coin",
-        "use red coin",
-        "use shiny coin",
-        "use concave coin",
-        "use corroded coin",
-        "go north",
-        "take teleporter",
-        "use teleporter", // code
-        "take business card",
-        "take strange book",
-    ]);
+    let mut saved_actions = VecDeque::from(maze::maze_commands::COMMANDS);
 
     let mut i = 0;
     loop {

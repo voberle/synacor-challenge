@@ -1,5 +1,5 @@
 pub mod instructions;
-pub mod intreg;
-pub mod register;
+mod intreg;
+mod register;
 pub mod storage;
 pub mod terminal;
