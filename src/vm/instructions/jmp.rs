@@ -8,19 +8,20 @@ use crate::vm::terminal::Terminal;
 // jmp: 6 a
 // jump to <a>
 pub struct Jmp {
+    addr: u16,
     a: IntReg,
 }
 
 impl Jmp {
     const ARGS_COUNT: u16 = 1;
 
-    fn new(a: IntReg) -> Self {
-        Self { a }
+    fn new(addr: u16, a: IntReg) -> Self {
+        Self { addr, a }
     }
 
-    pub fn inst(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = IntReg::new(mem[1]);
-        Box::new(Self::new(a))
+        Box::new(Self::new(addr, a))
     }
 }
 
@@ -46,7 +47,7 @@ impl fmt::Display for Jmp {
 
 #[test]
 fn test_exec() {
-    let ins = Jmp::new(IntReg::Value(37));
+    let ins = Jmp::new(1, IntReg::Value(37));
     let mut ir = 100;
     ins.exec(&mut ir, &mut Storage::new(), &mut Terminal::new(false));
     assert_eq!(ir, 37);

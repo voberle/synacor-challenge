@@ -9,6 +9,7 @@ use crate::vm::terminal::Terminal;
 // not: 14 a b
 //   stores 15-bit bitwise inverse of <b> in <a>
 pub struct Not {
+    addr: u16,
     a: RegNb,
     b: IntReg,
 }
@@ -20,14 +21,14 @@ fn not(x: u16) -> u16 {
 impl Not {
     const ARGS_COUNT: u16 = 2;
 
-    fn new(a: RegNb, b: IntReg) -> Self {
-        Self { a, b }
+    fn new(addr: u16, a: RegNb, b: IntReg) -> Self {
+        Self { addr, a, b }
     }
 
-    pub fn inst(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = RegNb::from(mem[1]);
         let b = IntReg::new(mem[2]);
-        Box::new(Self::new(a, b))
+        Box::new(Self::new(addr, a, b))
     }
 }
 
@@ -66,7 +67,7 @@ mod test {
 
     #[test]
     fn test_exec() {
-        let ins = Not::new(RegNb::new(3), IntReg::Register(RegNb::new(2)));
+        let ins = Not::new(1, RegNb::new(3), IntReg::Register(RegNb::new(2)));
         let mut terminal = Terminal::new(false);
         let mut storage = Storage::new();
         storage.regs.set(RegNb::new(2), 4);

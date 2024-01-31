@@ -8,19 +8,20 @@ use crate::vm::terminal::Terminal;
 // pop: 3 a
 //   remove the top element from the stack and write it into <a>; empty stack = error
 pub struct Pop {
+    addr: u16,
     a: RegNb,
 }
 
 impl Pop {
     const ARGS_COUNT: u16 = 1;
 
-    fn new(a: RegNb) -> Self {
-        Self { a }
+    fn new(addr: u16, a: RegNb) -> Self {
+        Self { addr, a }
     }
 
-    pub fn inst(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = RegNb::from(mem[1]);
-        Box::new(Self::new(a))
+        Box::new(Self::new(addr, a))
     }
 }
 
@@ -52,7 +53,7 @@ mod test {
 
     #[test]
     fn test_exec() {
-        let ins2 = Pop::new(RegNb::new(3));
+        let ins2 = Pop::new(1, RegNb::new(3));
         let mut terminal = Terminal::new(false);
         let mut storage = Storage::new();
         storage.stack.push(444);

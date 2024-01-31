@@ -19,6 +19,8 @@ use crate::vm::terminal::Terminal;
 pub struct BinaryOp {
     name: &'static str,
     binary_fn: fn(u16, u16) -> u16,
+
+    addr: u16,
     a: RegNb,
     b: IntReg,
     c: IntReg,
@@ -50,6 +52,7 @@ impl BinaryOp {
     fn new(
         name: &'static str,
         binary_fn: fn(u16, u16) -> u16,
+        addr: u16,
         a: RegNb,
         b: IntReg,
         c: IntReg,
@@ -57,67 +60,68 @@ impl BinaryOp {
         Self {
             name,
             binary_fn,
+            addr,
             a,
             b,
             c,
         }
     }
 
-    fn add(a: RegNb, b: IntReg, c: IntReg) -> Self {
-        Self::new("add", add, a, b, c)
+    fn add(addr: u16, a: RegNb, b: IntReg, c: IntReg) -> Self {
+        Self::new("add", add, addr, a, b, c)
     }
 
-    fn mult(a: RegNb, b: IntReg, c: IntReg) -> Self {
-        Self::new("mult", mult, a, b, c)
+    fn mult(addr: u16, a: RegNb, b: IntReg, c: IntReg) -> Self {
+        Self::new("mult", mult, addr, a, b, c)
     }
 
-    fn modulo(a: RegNb, b: IntReg, c: IntReg) -> Self {
-        Self::new("mod", modulo, a, b, c)
+    fn modulo(addr: u16, a: RegNb, b: IntReg, c: IntReg) -> Self {
+        Self::new("mod", modulo, addr, a, b, c)
     }
 
-    fn and(a: RegNb, b: IntReg, c: IntReg) -> Self {
-        Self::new("and", and, a, b, c)
+    fn and(addr: u16, a: RegNb, b: IntReg, c: IntReg) -> Self {
+        Self::new("and", and, addr, a, b, c)
     }
 
-    fn or(a: RegNb, b: IntReg, c: IntReg) -> Self {
-        Self::new("or", or, a, b, c)
+    fn or(addr: u16, a: RegNb, b: IntReg, c: IntReg) -> Self {
+        Self::new("or", or, addr, a, b, c)
     }
 
-    pub fn inst_add(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst_add(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         // For "add", spec says "assign into <a>", while for the other operations
         // it says "store into <a>".
         let a = RegNb::from(mem[1]);
         let b = IntReg::new(mem[2]);
         let c = IntReg::new(mem[3]);
-        Box::new(Self::add(a, b, c))
+        Box::new(Self::add(addr, a, b, c))
     }
 
-    pub fn inst_mult(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst_mult(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = RegNb::from(mem[1]);
         let b = IntReg::new(mem[2]);
         let c = IntReg::new(mem[3]);
-        Box::new(Self::mult(a, b, c))
+        Box::new(Self::mult(addr, a, b, c))
     }
 
-    pub fn inst_mod(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst_mod(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = RegNb::from(mem[1]);
         let b = IntReg::new(mem[2]);
         let c = IntReg::new(mem[3]);
-        Box::new(Self::modulo(a, b, c))
+        Box::new(Self::modulo(addr, a, b, c))
     }
 
-    pub fn inst_and(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst_and(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = RegNb::from(mem[1]);
         let b = IntReg::new(mem[2]);
         let c = IntReg::new(mem[3]);
-        Box::new(Self::and(a, b, c))
+        Box::new(Self::and(addr, a, b, c))
     }
 
-    pub fn inst_or(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst_or(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = RegNb::from(mem[1]);
         let b = IntReg::new(mem[2]);
         let c = IntReg::new(mem[3]);
-        Box::new(Self::or(a, b, c))
+        Box::new(Self::or(addr, a, b, c))
     }
 
     fn sign(&self) -> &'static str {
@@ -183,6 +187,7 @@ mod test {
     #[test]
     fn test_exec_add() {
         let ins = BinaryOp::add(
+            1,
             RegNb::new(3),
             IntReg::Register(RegNb::new(2)),
             IntReg::Value(37),
@@ -199,6 +204,7 @@ mod test {
     #[test]
     fn test_exec_mult() {
         let ins = BinaryOp::mult(
+            1,
             RegNb::new(3),
             IntReg::Value(10),
             IntReg::Register(RegNb::new(4)),
@@ -215,6 +221,7 @@ mod test {
     #[test]
     fn test_exec_mod() {
         let ins = BinaryOp::modulo(
+            1,
             RegNb::new(3),
             IntReg::Value(37),
             IntReg::Register(RegNb::new(4)),
@@ -230,7 +237,7 @@ mod test {
 
     #[test]
     fn test_exec_and() {
-        let ins = BinaryOp::and(RegNb::new(3), IntReg::Value(3), IntReg::Value(5));
+        let ins = BinaryOp::and(1, RegNb::new(3), IntReg::Value(3), IntReg::Value(5));
         let mut terminal = Terminal::new(false);
         let mut storage = Storage::new();
         let mut ir = 100;

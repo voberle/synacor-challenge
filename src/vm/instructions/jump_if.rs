@@ -12,6 +12,7 @@ use crate::vm::terminal::Terminal;
 pub struct JumpIf {
     name: &'static str,
     cond_fn: fn(u16) -> bool,
+    addr: u16,
     a: IntReg,
     b: IntReg,
 }
@@ -19,33 +20,34 @@ pub struct JumpIf {
 impl JumpIf {
     const ARGS_COUNT: u16 = 2;
 
-    fn new(name: &'static str, cond_fn: fn(u16) -> bool, a: IntReg, b: IntReg) -> Self {
+    fn new(name: &'static str, cond_fn: fn(u16) -> bool, addr: u16, a: IntReg, b: IntReg) -> Self {
         Self {
             name,
             cond_fn,
+            addr,
             a,
             b,
         }
     }
 
-    fn jt(a: IntReg, b: IntReg) -> Self {
-        Self::new("jt", |v| v != 0, a, b)
+    fn jt(addr: u16, a: IntReg, b: IntReg) -> Self {
+        Self::new("jt", |v| v != 0, addr, a, b)
     }
 
-    fn jf(a: IntReg, b: IntReg) -> Self {
-        Self::new("jf", |v| v == 0, a, b)
+    fn jf(addr: u16, a: IntReg, b: IntReg) -> Self {
+        Self::new("jf", |v| v == 0, addr, a, b)
     }
 
-    pub fn inst_jt(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst_jt(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = IntReg::new(mem[1]);
         let b = IntReg::new(mem[2]);
-        Box::new(Self::jt(a, b))
+        Box::new(Self::jt(addr, a, b))
     }
 
-    pub fn inst_jf(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst_jf(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = IntReg::new(mem[1]);
         let b = IntReg::new(mem[2]);
-        Box::new(Self::jf(a, b))
+        Box::new(Self::jf(addr, a, b))
     }
 }
 
@@ -87,7 +89,7 @@ mod test {
 
     #[test]
     fn test_exec_jt() {
-        let ins = JumpIf::jt(IntReg::Register(RegNb::new(2)), IntReg::Value(37));
+        let ins = JumpIf::jt(1, IntReg::Register(RegNb::new(2)), IntReg::Value(37));
         let mut terminal = Terminal::new(false);
         let mut storage = Storage::new();
         storage.regs.set(RegNb::new(2), 0);
@@ -102,7 +104,7 @@ mod test {
 
     #[test]
     fn test_exec_jf() {
-        let ins = JumpIf::jf(IntReg::Register(RegNb::new(2)), IntReg::Value(37));
+        let ins = JumpIf::jf(1, IntReg::Register(RegNb::new(2)), IntReg::Value(37));
         let mut terminal = Terminal::new(false);
         let mut storage = Storage::new();
         storage.regs.set(RegNb::new(2), 0);

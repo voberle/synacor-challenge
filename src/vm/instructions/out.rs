@@ -8,19 +8,20 @@ use crate::vm::terminal::Terminal;
 // out: 19 a
 // write the character represented by ascii code <a> to the terminal
 pub struct Out {
+    addr: u16,
     a: IntReg,
 }
 
 impl Out {
     const ARGS_COUNT: u16 = 1;
 
-    fn new(a: IntReg) -> Self {
-        Self { a }
+    fn new(addr: u16, a: IntReg) -> Self {
+        Self { addr, a }
     }
 
-    pub fn inst(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = IntReg::new(mem[1]);
-        Box::new(Self::new(a))
+        Box::new(Self::new(addr, a))
     }
 }
 

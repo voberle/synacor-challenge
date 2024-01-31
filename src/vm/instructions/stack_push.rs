@@ -8,19 +8,20 @@ use crate::vm::terminal::Terminal;
 // push: 2 a
 //   push <a> onto the stack
 pub struct Push {
+    addr: u16,
     a: IntReg,
 }
 
 impl Push {
     const ARGS_COUNT: u16 = 1;
 
-    fn new(a: IntReg) -> Self {
-        Self { a }
+    fn new(addr: u16, a: IntReg) -> Self {
+        Self { addr, a }
     }
 
-    pub fn inst(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = IntReg::new(mem[1]);
-        Box::new(Self::new(a))
+        Box::new(Self::new(addr, a))
     }
 }
 
@@ -52,7 +53,7 @@ mod test {
 
     #[test]
     fn test_exec() {
-        let ins1 = Push::new(IntReg::Register(RegNb::new(2)));
+        let ins1 = Push::new(1, IntReg::Register(RegNb::new(2)));
         let mut terminal = Terminal::new(false);
         let mut storage = Storage::new();
         storage.regs.set(RegNb::new(2), 444);

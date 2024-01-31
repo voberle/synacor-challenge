@@ -9,6 +9,7 @@ use crate::vm::terminal::Terminal;
 // rmem: 15 a b
 //   read memory at address <b> and write it to <a>
 pub struct RMem {
+    addr: u16,
     a: RegNb,
     b: IntReg,
 }
@@ -16,14 +17,14 @@ pub struct RMem {
 impl RMem {
     const ARGS_COUNT: u16 = 2;
 
-    fn new(a: RegNb, b: IntReg) -> Self {
-        Self { a, b }
+    fn new(addr: u16, a: RegNb, b: IntReg) -> Self {
+        Self { addr, a, b }
     }
 
-    pub fn inst(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = RegNb::from(mem[1]);
         let b = IntReg::new(mem[2]);
-        Box::new(Self::new(a, b))
+        Box::new(Self::new(addr, a, b))
     }
 }
 
@@ -61,7 +62,7 @@ mod test {
 
     #[test]
     fn test_exec_rmem() {
-        let ins = RMem::new(RegNb::new(2), IntReg::Value(1000));
+        let ins = RMem::new(1, RegNb::new(2), IntReg::Value(1000));
         let mut terminal = Terminal::new(false);
         let mut storage = Storage::new();
         storage.mem.write(1000, 567);

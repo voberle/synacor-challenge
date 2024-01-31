@@ -6,17 +6,19 @@ use crate::vm::terminal::Terminal;
 
 // ret: 18
 //   remove the top element from the stack and jump to it; empty stack = halt
-pub struct Ret {}
+pub struct Ret {
+    addr: u16,
+}
 
 impl Ret {
     const ARGS_COUNT: u16 = 0;
 
-    fn new() -> Self {
-        Self {}
+    fn new(addr: u16) -> Self {
+        Self { addr }
     }
 
-    pub fn inst(_mem: &[u16]) -> Box<dyn Instruction> {
-        Box::new(Self::new())
+    pub fn inst(addr: u16, _mem: &[u16]) -> Box<dyn Instruction> {
+        Box::new(Self::new(addr))
     }
 }
 
@@ -47,7 +49,7 @@ mod test {
 
     #[test]
     fn test_exec() {
-        let ins = Ret::new();
+        let ins = Ret::new(1);
         let mut storage = Storage::new();
         storage.stack.push(300);
         storage.stack.push(478);

@@ -12,19 +12,20 @@ use crate::vm::terminal::Terminal;
 // lines from the keyboard instead of having to figure out how to read
 // individual characters
 pub struct In {
+    addr: u16,
     a: RegNb,
 }
 
 impl In {
     const ARGS_COUNT: u16 = 1;
 
-    fn new(a: RegNb) -> Self {
-        Self { a }
+    fn new(addr: u16, a: RegNb) -> Self {
+        Self { addr, a }
     }
 
-    pub fn inst(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = RegNb::from(mem[1]);
-        Box::new(Self::new(a))
+        Box::new(Self::new(addr, a))
     }
 }
 

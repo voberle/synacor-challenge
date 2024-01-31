@@ -27,7 +27,7 @@ pub trait Instruction: Display {
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal);
 }
 
-type InstanceFn = fn(&[u16]) -> Box<dyn Instruction>;
+type InstanceFn = fn(u16, &[u16]) -> Box<dyn Instruction>;
 
 const BUILDERS: [InstanceFn; 22] = [
     halt::Halt::inst,               // 0
@@ -61,5 +61,5 @@ pub fn is_opcode(val: u16) -> bool {
 pub fn get_instruction(storage: &Storage, address: u16) -> Box<dyn Instruction> {
     let opcode = storage.mem.read(address);
     assert!(is_opcode(opcode));
-    BUILDERS[opcode as usize](storage.mem.ins_slice(address))
+    BUILDERS[opcode as usize](address, storage.mem.ins_slice(address))
 }

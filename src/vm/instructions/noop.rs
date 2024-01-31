@@ -6,17 +6,19 @@ use crate::vm::terminal::Terminal;
 
 // noop: 21
 // no operation
-pub struct Noop {}
+pub struct Noop {
+    addr: u16,
+}
 
 impl Noop {
     const ARGS_COUNT: u16 = 0;
 
-    fn new() -> Self {
-        Self {}
+    fn new(addr: u16) -> Self {
+        Self { addr }
     }
 
-    pub fn inst(_mem: &[u16]) -> Box<dyn Instruction> {
-        Box::new(Self::new())
+    pub fn inst(addr: u16, _mem: &[u16]) -> Box<dyn Instruction> {
+        Box::new(Self::new(addr))
     }
 }
 

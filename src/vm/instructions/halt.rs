@@ -6,17 +6,19 @@ use crate::vm::terminal::Terminal;
 
 // halt: 0
 // stop execution and terminate the program
-pub struct Halt {}
+pub struct Halt {
+    addr: u16,
+}
 
 impl Halt {
     const ARGS_COUNT: u16 = 0;
 
-    fn new() -> Self {
-        Self {}
+    fn new(addr: u16) -> Self {
+        Self { addr }
     }
 
-    pub fn inst(_mem: &[u16]) -> Box<dyn Instruction> {
-        Box::new(Self::new())
+    pub fn inst(addr: u16, _mem: &[u16]) -> Box<dyn Instruction> {
+        Box::new(Self::new(addr))
     }
 }
 

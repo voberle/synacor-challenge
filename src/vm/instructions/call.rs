@@ -8,19 +8,20 @@ use crate::vm::terminal::Terminal;
 // call: 17 a
 //   write the address of the next instruction to the stack and jump to <a>
 pub struct Call {
+    addr: u16,
     a: IntReg,
 }
 
 impl Call {
     const ARGS_COUNT: u16 = 1;
 
-    fn new(a: IntReg) -> Self {
-        Self { a }
+    fn new(addr: u16, a: IntReg) -> Self {
+        Self { addr, a }
     }
 
-    pub fn inst(mem: &[u16]) -> Box<dyn Instruction> {
+    pub fn inst(addr: u16, mem: &[u16]) -> Box<dyn Instruction> {
         let a = IntReg::new(mem[1]);
-        Box::new(Self::new(a))
+        Box::new(Self::new(addr, a))
     }
 }
 
@@ -56,7 +57,7 @@ mod test {
 
     #[test]
     fn test_exec() {
-        let ins = Call::new(IntReg::Value(37));
+        let ins = Call::new(1, IntReg::Value(37));
         let mut storage = Storage::new();
         let mut ir = 100;
         ins.exec(&mut ir, &mut storage, &mut Terminal::new(false));
