@@ -1,6 +1,7 @@
-pub mod instructions;
+mod instructions;
 mod intreg;
 mod register;
+mod storage;
+mod terminal;
+
 pub mod run;
-pub mod storage;
-pub mod terminal;
