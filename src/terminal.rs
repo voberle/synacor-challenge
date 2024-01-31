@@ -45,9 +45,12 @@ impl Terminal {
         out
     }
 
-    // For tests: Set what should be read from terminal.
-    #[cfg(test)]
+    // Set what should be read from terminal.
     pub fn set_input(&mut self, input: &str) {
         self.input = input.to_string();
+    }
+
+    pub fn is_input_empty(&self) -> bool {
+        self.input.is_empty()
     }
 }
