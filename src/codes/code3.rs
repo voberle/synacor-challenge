@@ -1,9 +1,9 @@
 #![cfg(test)]
 
 use crate::codes::codes_check::verify_code;
-use crate::instructions::get_instruction;
-use crate::storage::Storage;
-use crate::terminal::Terminal;
+use crate::vm::instructions::get_instruction;
+use crate::vm::storage::Storage;
+use crate::vm::terminal::Terminal;
 
 fn code() -> String {
     let mut ir = 0;

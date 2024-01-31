@@ -1,9 +1,9 @@
 use std::fmt;
 
-use crate::instructions::Instruction;
-use crate::intreg::IntReg;
-use crate::storage::Storage;
-use crate::terminal::Terminal;
+use crate::vm::instructions::Instruction;
+use crate::vm::intreg::IntReg;
+use crate::vm::storage::Storage;
+use crate::vm::terminal::Terminal;
 
 // push: 2 a
 //   push <a> onto the stack
@@ -45,7 +45,7 @@ impl fmt::Display for Push {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::register::RegNb;
+    use crate::vm::register::RegNb;
 
     #[test]
     fn test_exec() {

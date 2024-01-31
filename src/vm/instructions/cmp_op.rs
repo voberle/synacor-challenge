@@ -1,10 +1,10 @@
 use std::fmt;
 
-use crate::instructions::Instruction;
-use crate::intreg::IntReg;
-use crate::register::RegNb;
-use crate::storage::Storage;
-use crate::terminal::Terminal;
+use crate::vm::instructions::Instruction;
+use crate::vm::intreg::IntReg;
+use crate::vm::register::RegNb;
+use crate::vm::storage::Storage;
+use crate::vm::terminal::Terminal;
 
 // eq: 4 a b c
 //   set <a> to 1 if <b> is equal to <c>; set it to 0 otherwise
@@ -113,7 +113,7 @@ impl fmt::Display for CmpOp {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::register::RegNb;
+    use crate::vm::register::RegNb;
 
     #[test]
     fn test_exec_eq() {

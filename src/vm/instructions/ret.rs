@@ -1,8 +1,8 @@
 use std::fmt;
 
-use crate::instructions::Instruction;
-use crate::storage::Storage;
-use crate::terminal::Terminal;
+use crate::vm::instructions::Instruction;
+use crate::vm::storage::Storage;
+use crate::vm::terminal::Terminal;
 
 // ret: 18
 //   remove the top element from the stack and jump to it; empty stack = halt

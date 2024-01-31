@@ -1,9 +1,9 @@
 use std::fmt;
 
-use crate::instructions::Instruction;
-use crate::intreg::IntReg;
-use crate::storage::Storage;
-use crate::terminal::Terminal;
+use crate::vm::instructions::Instruction;
+use crate::vm::intreg::IntReg;
+use crate::vm::storage::Storage;
+use crate::vm::terminal::Terminal;
 
 // jt: 7 a b
 //   if <a> is nonzero, jump to <b>
@@ -81,7 +81,7 @@ impl fmt::Display for JumpIf {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::register::RegNb;
+    use crate::vm::register::RegNb;
 
     #[test]
     fn test_exec_jt() {

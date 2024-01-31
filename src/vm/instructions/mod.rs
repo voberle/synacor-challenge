@@ -17,7 +17,8 @@ mod unary_op;
 
 use std::fmt::Display;
 
-use crate::{storage::Storage, terminal::Terminal};
+use crate::vm::storage::Storage;
+use crate::vm::terminal::Terminal;
 
 pub trait Instruction: Display {
     fn name(&self) -> &'static str;

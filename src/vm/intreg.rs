@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::register::RegNb;
+use crate::vm::register::RegNb;
 
 // The numbers in the binary format can mean two things: A literal value or a register number.
 #[derive(Debug, Clone, Copy)]

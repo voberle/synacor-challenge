@@ -1,9 +1,9 @@
 use std::fmt;
 
-use crate::instructions::Instruction;
-use crate::intreg::IntReg;
-use crate::storage::Storage;
-use crate::terminal::Terminal;
+use crate::vm::instructions::Instruction;
+use crate::vm::intreg::IntReg;
+use crate::vm::storage::Storage;
+use crate::vm::terminal::Terminal;
 
 // call: 17 a
 //   write the address of the next instruction to the stack and jump to <a>

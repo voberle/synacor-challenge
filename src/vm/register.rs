@@ -1,6 +1,6 @@
 use std::{fmt, ops::Deref};
 
-use crate::intreg::IntReg;
+use crate::vm::intreg::IntReg;
 
 // Number of a register. Enforces that the registers number is in correct range,
 // and provides helper functions such as more readable display.

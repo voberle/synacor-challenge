@@ -1,9 +1,9 @@
 use std::fmt;
 
-use crate::instructions::Instruction;
-use crate::register::RegNb;
-use crate::storage::Storage;
-use crate::terminal::Terminal;
+use crate::vm::instructions::Instruction;
+use crate::vm::register::RegNb;
+use crate::vm::storage::Storage;
+use crate::vm::terminal::Terminal;
 
 // pop: 3 a
 //   remove the top element from the stack and write it into <a>; empty stack = error
@@ -45,7 +45,7 @@ impl fmt::Display for Pop {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::register::RegNb;
+    use crate::vm::register::RegNb;
 
     #[test]
     fn test_exec() {

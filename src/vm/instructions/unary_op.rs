@@ -1,10 +1,10 @@
 use std::fmt;
 
-use crate::instructions::Instruction;
-use crate::intreg::IntReg;
-use crate::register::RegNb;
-use crate::storage::Storage;
-use crate::terminal::Terminal;
+use crate::vm::instructions::Instruction;
+use crate::vm::intreg::IntReg;
+use crate::vm::register::RegNb;
+use crate::vm::storage::Storage;
+use crate::vm::terminal::Terminal;
 
 // not: 14 a b
 //   stores 15-bit bitwise inverse of <b> in <a>
@@ -52,7 +52,7 @@ impl fmt::Display for Not {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::register::RegNb;
+    use crate::vm::register::RegNb;
 
     #[test]
     fn test_not() {

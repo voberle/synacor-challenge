@@ -1,7 +1,8 @@
-use crate::instructions::Instruction;
-use crate::storage::Storage;
-use crate::terminal::Terminal;
 use std::fmt;
+
+use crate::vm::instructions::Instruction;
+use crate::vm::storage::Storage;
+use crate::vm::terminal::Terminal;
 
 // noop: 21
 // no operation

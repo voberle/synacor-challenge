@@ -1,15 +1,11 @@
 mod codes;
-mod instructions;
-mod intreg;
-mod register;
-mod storage;
-mod terminal;
+mod vm;
 
 use std::collections::VecDeque;
 
-use instructions::get_instruction;
-use storage::Storage;
-use terminal::Terminal;
+use vm::instructions::get_instruction;
+use vm::storage::Storage;
+use vm::terminal::Terminal;
 
 const DEBUG: bool = false;
 

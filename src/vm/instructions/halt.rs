@@ -1,8 +1,8 @@
 use std::fmt;
 
-use crate::instructions::Instruction;
-use crate::storage::Storage;
-use crate::terminal::Terminal;
+use crate::vm::instructions::Instruction;
+use crate::vm::storage::Storage;
+use crate::vm::terminal::Terminal;
 
 // halt: 0
 // stop execution and terminate the program

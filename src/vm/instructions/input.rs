@@ -1,9 +1,9 @@
 use std::fmt;
 
-use crate::instructions::Instruction;
-use crate::register::RegNb;
-use crate::storage::Storage;
-use crate::terminal::Terminal;
+use crate::vm::instructions::Instruction;
+use crate::vm::register::RegNb;
+use crate::vm::storage::Storage;
+use crate::vm::terminal::Terminal;
 
 // in: 20 a
 //   read a character from the terminal and write its ascii code to <a>;

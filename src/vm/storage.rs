@@ -1,6 +1,6 @@
 use std::fs;
 
-use crate::register::Registers;
+use crate::vm::register::Registers;
 
 fn load_bin() -> Vec<u16> {
     let bytes = fs::read("resources/challenge.bin").unwrap();
