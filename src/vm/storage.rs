@@ -31,6 +31,11 @@ impl Memory {
     pub fn write(&mut self, a: u16, val: u16) {
         self.mem[a as usize] = val;
     }
+
+    pub fn ins_slice(&self, from: u16) -> &[u16] {
+        let f = from as usize;
+        &self.mem[f..f + 4]
+    }
 }
 
 // Holder for all 3 storage regions.

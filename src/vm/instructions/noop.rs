@@ -6,21 +6,17 @@ use crate::vm::terminal::Terminal;
 
 // noop: 21
 // no operation
-pub struct Noop {
-    // Used to save the opcode when Noop is used to replaced an unimplemented instruction.
-    opcode: u16,
-}
+pub struct Noop {}
 
 impl Noop {
     const ARGS_COUNT: u16 = 0;
 
-    fn new<const OPCODE: u16>() -> Self {
-        Self { opcode: OPCODE }
+    fn new() -> Self {
+        Self {}
     }
 
-    pub fn inst<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
-        assert_eq!(storage.mem.read(address), OPCODE);
-        Box::new(Self::new::<OPCODE>())
+    pub fn inst(_mem: &[u16]) -> Box<dyn Instruction> {
+        Box::new(Self::new())
     }
 }
 
@@ -36,10 +32,6 @@ impl Instruction for Noop {
 
 impl fmt::Display for Noop {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if self.opcode == 21 {
-            write!(f, "Noop")
-        } else {
-            write!(f, "NOT IMPL: {}", self.opcode)
-        }
+        write!(f, "Noop")
     }
 }

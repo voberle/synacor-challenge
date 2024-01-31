@@ -53,19 +53,17 @@ impl CmpOp {
         Self::new("gt", gt, a, b, c)
     }
 
-    pub fn inst_eq<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
-        assert_eq!(storage.mem.read(address), OPCODE);
-        let a = RegNb::from(storage.mem.read(address + 1));
-        let b = IntReg::new(storage.mem.read(address + 2));
-        let c = IntReg::new(storage.mem.read(address + 3));
+    pub fn inst_eq(mem: &[u16]) -> Box<dyn Instruction> {
+        let a = RegNb::from(mem[1]);
+        let b = IntReg::new(mem[2]);
+        let c = IntReg::new(mem[3]);
         Box::new(Self::eq(a, b, c))
     }
 
-    pub fn inst_gt<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
-        assert_eq!(storage.mem.read(address), OPCODE);
-        let a = RegNb::from(storage.mem.read(address + 1));
-        let b = IntReg::new(storage.mem.read(address + 2));
-        let c = IntReg::new(storage.mem.read(address + 3));
+    pub fn inst_gt(mem: &[u16]) -> Box<dyn Instruction> {
+        let a = RegNb::from(mem[1]);
+        let b = IntReg::new(mem[2]);
+        let c = IntReg::new(mem[3]);
         Box::new(Self::gt(a, b, c))
     }
 

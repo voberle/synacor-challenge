@@ -15,8 +15,7 @@ impl Ret {
         Self {}
     }
 
-    pub fn inst<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
-        assert_eq!(storage.mem.read(address), OPCODE);
+    pub fn inst(_mem: &[u16]) -> Box<dyn Instruction> {
         Box::new(Self::new())
     }
 }

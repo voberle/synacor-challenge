@@ -83,45 +83,40 @@ impl BinaryOp {
         Self::new("or", or, a, b, c)
     }
 
-    pub fn inst_add<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
-        assert_eq!(storage.mem.read(address), OPCODE);
+    pub fn inst_add(mem: &[u16]) -> Box<dyn Instruction> {
         // For "add", spec says "assign into <a>", while for the other operations
         // it says "store into <a>".
-        let a = RegNb::from(storage.mem.read(address + 1));
-        let b = IntReg::new(storage.mem.read(address + 2));
-        let c = IntReg::new(storage.mem.read(address + 3));
+        let a = RegNb::from(mem[1]);
+        let b = IntReg::new(mem[2]);
+        let c = IntReg::new(mem[3]);
         Box::new(Self::add(a, b, c))
     }
 
-    pub fn inst_mult<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
-        assert_eq!(storage.mem.read(address), OPCODE);
-        let a = RegNb::from(storage.mem.read(address + 1));
-        let b = IntReg::new(storage.mem.read(address + 2));
-        let c = IntReg::new(storage.mem.read(address + 3));
+    pub fn inst_mult(mem: &[u16]) -> Box<dyn Instruction> {
+        let a = RegNb::from(mem[1]);
+        let b = IntReg::new(mem[2]);
+        let c = IntReg::new(mem[3]);
         Box::new(Self::mult(a, b, c))
     }
 
-    pub fn inst_mod<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
-        assert_eq!(storage.mem.read(address), OPCODE);
-        let a = RegNb::from(storage.mem.read(address + 1));
-        let b = IntReg::new(storage.mem.read(address + 2));
-        let c = IntReg::new(storage.mem.read(address + 3));
+    pub fn inst_mod(mem: &[u16]) -> Box<dyn Instruction> {
+        let a = RegNb::from(mem[1]);
+        let b = IntReg::new(mem[2]);
+        let c = IntReg::new(mem[3]);
         Box::new(Self::modulo(a, b, c))
     }
 
-    pub fn inst_and<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
-        assert_eq!(storage.mem.read(address), OPCODE);
-        let a = RegNb::from(storage.mem.read(address + 1));
-        let b = IntReg::new(storage.mem.read(address + 2));
-        let c = IntReg::new(storage.mem.read(address + 3));
+    pub fn inst_and(mem: &[u16]) -> Box<dyn Instruction> {
+        let a = RegNb::from(mem[1]);
+        let b = IntReg::new(mem[2]);
+        let c = IntReg::new(mem[3]);
         Box::new(Self::and(a, b, c))
     }
 
-    pub fn inst_or<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
-        assert_eq!(storage.mem.read(address), OPCODE);
-        let a = RegNb::from(storage.mem.read(address + 1));
-        let b = IntReg::new(storage.mem.read(address + 2));
-        let c = IntReg::new(storage.mem.read(address + 3));
+    pub fn inst_or(mem: &[u16]) -> Box<dyn Instruction> {
+        let a = RegNb::from(mem[1]);
+        let b = IntReg::new(mem[2]);
+        let c = IntReg::new(mem[3]);
         Box::new(Self::or(a, b, c))
     }
 

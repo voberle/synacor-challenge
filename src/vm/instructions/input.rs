@@ -22,9 +22,8 @@ impl In {
         Self { a }
     }
 
-    pub fn inst<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
-        assert_eq!(storage.mem.read(address), OPCODE);
-        let a = RegNb::from(storage.mem.read(address + 1));
+    pub fn inst(mem: &[u16]) -> Box<dyn Instruction> {
+        let a = RegNb::from(mem[1]);
         Box::new(Self::new(a))
     }
 }

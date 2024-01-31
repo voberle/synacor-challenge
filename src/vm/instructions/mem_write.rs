@@ -19,10 +19,9 @@ impl WMem {
         Self { a, b }
     }
 
-    pub fn inst<const OPCODE: u16>(storage: &Storage, address: u16) -> Box<dyn Instruction> {
-        assert_eq!(storage.mem.read(address), OPCODE);
-        let a = IntReg::new(storage.mem.read(address + 1));
-        let b = IntReg::new(storage.mem.read(address + 2));
+    pub fn inst(mem: &[u16]) -> Box<dyn Instruction> {
+        let a = IntReg::new(mem[1]);
+        let b = IntReg::new(mem[2]);
         Box::new(Self::new(a, b))
     }
 }
