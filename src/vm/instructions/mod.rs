@@ -54,8 +54,12 @@ const BUILDERS: [InstanceFn; 22] = [
     noop::Noop::inst,               // 21
 ];
 
+pub fn is_opcode(val: u16) -> bool {
+    (0..=21).contains(&val)
+}
+
 pub fn get_instruction(storage: &Storage, address: u16) -> Box<dyn Instruction> {
     let opcode = storage.mem.read(address);
-    assert!((0..=21).contains(&opcode));
+    assert!(is_opcode(opcode));
     BUILDERS[opcode as usize](storage.mem.ins_slice(address))
 }
