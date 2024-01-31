@@ -7,6 +7,7 @@ pub struct Terminal {
     print: bool,
 
     input: String,
+    interactive_mode: bool,
 }
 
 impl Terminal {
@@ -16,6 +17,7 @@ impl Terminal {
             output: String::new(),
             print,
             input: String::new(),
+            interactive_mode: false,
         }
     }
 
@@ -27,14 +29,24 @@ impl Terminal {
         self.output.push(c);
     }
 
-    // Read a char from terminal
-    pub fn read(&mut self) -> char {
+    // Read a char from terminal.
+    // The terminal input is cached in `self.input`: If that is not empty, return the first char from it.
+    // If it's empty, read from stdin and fill the cache with the read line.
+    // If the read line starts with '>', just return None.
+    pub fn read(&mut self) -> Option<char> {
         if self.input.is_empty() {
+            let mut buf = String::new();
             io::stdin()
-                .read_line(&mut self.input)
+                .read_line(&mut buf)
                 .expect("Failed to read input");
+            if buf.starts_with('>') {
+                self.interactive_mode = true;
+                return None;
+            } else {
+                self.input = buf;
+            }
         }
-        self.input.remove(0)
+        Some(self.input.remove(0))
     }
 
     // Get all that went to terminal, and clears it.
@@ -52,5 +64,13 @@ impl Terminal {
 
     pub fn is_input_empty(&self) -> bool {
         self.input.is_empty()
+    }
+
+    pub fn is_interactive_mode(&self) -> bool {
+        self.interactive_mode
+    }
+
+    pub fn quit_interactive_mode(&mut self) {
+        self.interactive_mode = false;
     }
 }

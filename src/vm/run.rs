@@ -1,4 +1,5 @@
 use std::collections::VecDeque;
+use std::io::{self, Write};
 
 use crate::vm::instructions::get_instruction;
 use crate::vm::storage::Storage;
@@ -66,5 +67,25 @@ pub fn execute_program(actions: &[&str], debug: bool) {
         }
 
         ins.exec(&mut ir, &mut storage, &mut terminal);
+
+        while terminal.is_interactive_mode() {
+            if !interactive_mode(ir, &storage) {
+                terminal.quit_interactive_mode();
+            }
+        }
     }
+}
+
+fn interactive_mode(ir: u16, storage: &Storage) -> bool {
+    print!("> ");
+    let _ = io::stdout().flush();
+    let mut buf = String::new();
+    io::stdin()
+        .read_line(&mut buf)
+        .expect("Failed to read input");
+    match buf.trim() {
+        "v1" => println!("Next ins: {}", get_instruction(storage, ir)),
+        _ => return false,
+    }
+    true
 }

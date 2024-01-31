@@ -34,9 +34,13 @@ impl Instruction for In {
     }
 
     fn exec(&self, ir: &mut u16, st: &mut Storage, term: &mut Terminal) {
-        let c = term.read() as u16;
-        st.regs.set(self.a, c);
-        *ir += 1 + Self::ARGS_COUNT;
+        if let Some(c) = term.read() {
+            st.regs.set(self.a, c as u16);
+            *ir += 1 + Self::ARGS_COUNT;
+        } else {
+            assert!(term.is_interactive_mode());
+            // By not modifying ir in case read returned None, we ensure that next exec attempt will try on this instruction again.
+        }
     }
 }
 
