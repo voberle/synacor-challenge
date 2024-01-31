@@ -25,5 +25,5 @@ The challenge was to find a serie of 8 codes. We know if the codes are correct b
 Main difficulties I encountered:
 
 - I didn't realize at first that the memory was a single address space for instructions and data.
-- At first I assumed the maze should be solved using a program, before accepting that the best was to solve it by hand.
+- At first I assumed the maze should be solved using a program, before accepting that the best was to solve it by hand. Here is the [map](resources/maze_map.svg).
 - The twisty passage part in the maze was a pain to get done, with luck involved to finally find it.
