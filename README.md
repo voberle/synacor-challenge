@@ -38,3 +38,9 @@ Main difficulties I encountered for the 6 first codes:
 ### Code 7
 
 That one is *very* hard. My [analysis is here](teleport_code_analysis.md).
+
+### Code 8
+
+Once I found the orb and [draw the map](resources/island_map.svg), it was fairly clear what needed to do: Find the shortest path that gives the correct result.
+
+I implemented a rough recursive approach. Since nodes can be visited multiple times, the trick was to add enough limits to the algorithm so that it ends.

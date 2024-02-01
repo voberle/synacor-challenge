@@ -1,5 +1,5 @@
 // Commands to run for going through the maze.
-pub const COMMANDS: [&str; 53] = [
+pub const COMMANDS: [&str; 82] = [
     "go doorway",
     "go north",
     "go north",
@@ -52,5 +52,34 @@ pub const COMMANDS: [&str; 53] = [
     "take business card",
     "take strange book",
     "look strange book",
-    "use teleporter",
+    "use teleporter", // code
+    "go north",
+    "go north",
+    "go north",
+    "go north",
+    "go north",
+    "go north",
+    "go north",
+    "go east",
+    "take journal",
+    "look journal",
+    "go west",
+    "go north",
+    "go north",
+    "take orb",
+    "go north", // beginning orb code
+    "go east",
+    "go east",
+    "go north",
+    "go west",
+    "go south",
+    "go east",
+    "go east",
+    "go west",
+    "go north",
+    "go north",
+    "go east", // end orb code
+    "go vault",
+    "take mirror",
+    "use mirror", // code
 ];
