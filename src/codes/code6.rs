@@ -21,7 +21,12 @@ fn code() -> String {
     // Patch the program with the correct code and to by-pass the check
     patch_code::patch(&mut storage);
 
-    let msg: String = run::execute_actions_with_storage(&["use teleporter"], &mut ir, &mut storage, &mut terminal);
+    let msg: String = run::execute_actions_with_storage(
+        &["use teleporter"],
+        &mut ir,
+        &mut storage,
+        &mut terminal,
+    );
     let re =
         Regex::new(r"Someone seems to have drawn a message in the sand here:[.\n ]+(\w+)").unwrap();
     re.captures(&msg).unwrap()[1].to_string()

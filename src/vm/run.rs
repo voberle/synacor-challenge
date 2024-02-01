@@ -28,7 +28,12 @@ pub fn execute_actions(actions: &[&str]) -> String {
 }
 
 #[cfg(test)]
-pub fn execute_actions_with_storage(actions: &[&str], ir: &mut u16, storage: &mut Storage, terminal: &mut Terminal) -> String {
+pub fn execute_actions_with_storage(
+    actions: &[&str],
+    ir: &mut u16,
+    storage: &mut Storage,
+    terminal: &mut Terminal,
+) -> String {
     let mut saved_actions: VecDeque<&str> = VecDeque::new();
     saved_actions.extend(actions.iter().copied());
 
