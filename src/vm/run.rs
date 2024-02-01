@@ -21,6 +21,11 @@ fn get_next_action(saved_actions: &mut VecDeque<&str>) -> Option<String> {
 #[cfg(test)]
 pub fn execute_actions(actions: &[&str]) -> String {
     let mut storage = Storage::new();
+    execute_actions_with_storage(actions, &mut storage)
+}
+
+#[cfg(test)]
+pub fn execute_actions_with_storage(actions: &[&str], storage: &mut Storage) -> String {
     let mut terminal = Terminal::new(false);
     let mut ir: u16 = 0;
 
@@ -38,7 +43,7 @@ pub fn execute_actions(actions: &[&str]) -> String {
             }
         }
 
-        ins.exec(&mut ir, &mut storage, &mut terminal);
+        ins.exec(&mut ir, storage, &mut terminal);
     }
 
     terminal.flush_out()
