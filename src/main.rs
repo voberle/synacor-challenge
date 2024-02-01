@@ -2,11 +2,16 @@ mod codes;
 mod maze;
 mod vm;
 
-use vm::run::execute_program;
-
 fn main() {
-    execute_program(&maze::maze_commands::COMMANDS);
+    maze::teleporter_code::check_fn6049();
+    // To find the teleporter code (warning: slow):
+    // maze::teleporter_code::find_teleporter_code();
 
+    // To decompile the binary:
     // vm::decompiler::decompile();
-    // execute_program(&[], false);
+
+    // To run the program without saved commands:
+    // vm::run::execute_program(&[]);
+
+    vm::run::execute_program(&maze::maze_commands::COMMANDS);
 }

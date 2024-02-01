@@ -37,20 +37,4 @@ Main difficulties I encountered for the 6 first codes:
 
 ### Code 7
 
-That one is *very* hard.
-
-Using the decompiled code, I found where the method that is doing the register 8 check is called, and skipped it:
-
-    > setm 5511 21
-    Memory at 5511 set to 21
-    > setm 5512 21
-    Memory at 5512 set to 21
-    > setm 5516 4
-    Memory at 5516 set to 4
-    > setr 7 44
-    Register r7 set to 44
-    > q
-    Quitting debugger
-    use teleporter
-
-But the resulting code is not the right one.
+That one is *very* hard. My [analysis is here](teleport_code_analysis.md).
