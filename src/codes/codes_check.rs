@@ -1,4 +1,4 @@
-#![allow(dead_code)]
+#![cfg(test)]
 
 // MD5 hashes of the 8 codes produced by the challenge.
 // echo -n "<Code Here>" | md5sum
@@ -15,12 +15,4 @@ const CODES: [&str; 8] = [
 
 pub fn verify_code(code_nb: usize, code: &str) -> bool {
     format!("{:x}", md5::compute(code.as_bytes())) == CODES[code_nb]
-}
-
-pub fn check_code(code_nb: usize, code: &str) {
-    if verify_code(code_nb, code) {
-        println!("Code {} is correct", code_nb);
-    } else {
-        panic!("Wrong code {}", code_nb)
-    }
 }
