@@ -1,6 +1,7 @@
 use std::collections::VecDeque;
 use std::io::{self, Write};
 
+use crate::maze::patch_code;
 use crate::vm::debugger;
 use crate::vm::instructions::get_instruction;
 use crate::vm::storage::Storage;
@@ -69,6 +70,12 @@ pub fn execute_program(actions: &[&str]) {
 
         if ins.name() == "in" && terminal.is_input_empty() {
             if let Some(action) = get_next_action(&mut saved_actions) {
+                // Patch the program with the correct code and to by-pass the check.
+                // We cannot patch the code too early, so wait until it's time.
+                if action.trim() == "look strange book" {
+                    patch_code::patch(&mut storage);
+                }
+
                 print!("{}", action);
                 terminal.set_input(&action);
             }

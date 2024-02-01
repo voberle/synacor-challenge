@@ -1,5 +1,5 @@
 // Commands to run for going through the maze.
-pub const COMMANDS: [&str; 52] = [
+pub const COMMANDS: [&str; 53] = [
     "go doorway",
     "go north",
     "go north",
@@ -52,4 +52,5 @@ pub const COMMANDS: [&str; 52] = [
     "take business card",
     "take strange book",
     "look strange book",
+    "use teleporter",
 ];
